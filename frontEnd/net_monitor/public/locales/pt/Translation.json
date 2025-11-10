@@ -1,0 +1,226 @@
+{
+    "languageSelector": {
+        "language": "Idioma",
+        "pt": "Português",
+        "es": "Espanhol",
+        "en": "Inglês"
+    },
+    "loginPage": {
+        "signIn": "Login",
+        "email": "Email",
+        "password": "Senha",
+        "schema": {
+            "invalidEmail": "Informe um email válido",
+            "passwordLength": "A senha deve conter no mínimo 6 caracteres"
+        },
+        "errors": {
+            "invalidPassword": "Senha inválida",
+            "userNotFound": "Usuário não encontrado",
+            "userInactive": "Usuário inativado",
+            "loginError": "Erro ao realizar login"
+        }
+    },
+    "sideMenu": {
+        "mainItemsList": {
+            "routers": "Roteadores",
+            "transmitters": "Transmissores",
+            "switches": "Swithes"
+        }
+    },
+    "dataTable": {
+        "create": "Criar",
+        "unsort": "Desordenar",
+        "filter": "Filtrar",
+        "hideColumn": "Ocultar coluna",
+        "manageColumns": "Gerenciar colunas",
+        "sortDesc": "Ordenar decrescente",
+        "sortAsc": "Ordenar crescente",
+        "rowsPerPage": "Linhas por página",
+        "exportCsv": "Exportar em csv"
+    },
+    "routers": {
+        "dataTable": {
+            "headers": {
+                "name": "Nome",
+                "description": "Descrição",
+                "status": "Status",
+                "integration": "Integração",
+                "ipAddress": "Endereço IP",
+                "user": "Usuário",
+                "snmpCommunity": "Community Snmp",
+                "snmpPort": "Porta Snmp",
+                "createdAt": "Criado em",
+                "updatedAt": "Atualizado em"
+            },
+            "deleteSuccess": "Roteador deletado com sucesso",
+            "deleteError": "Erro ao deletar roteador"
+        },
+        "createForm": {
+            "fields": {
+                "name": "Nome",
+                "integration": "Integração",
+                "active": "Ativo",
+                "description": "Descrição",
+                "ipAddress": "Endereço IP",
+                "accessUser": "Usuário de acesso",
+                "accessPassword": "Senha de acesso",
+                "snmpCommunity": "Community Snmp",
+                "snmpPort": "Porta Snmp"
+            },
+            "create": "Cadastrar",
+            "save": "Salvar",
+            "successMessages": {
+                "created": "Roteador cadastrado com sucesso!",
+                "saved": "Roteador salvo com sucesso!"
+            },
+            "errors": {
+                "error": "Erro ao cadastrar roteador",
+                "errorSaving": "Erro ao salvar roteador",
+                "duplicatedRouterName": "Já existe um roteador com o nome informado"
+            }
+        },
+        "schema": {
+            "passwordLength": "A senha deve conter no mínimo 6 caracteres",
+            "invalidIpAddress": "Endereço IP inválido"
+        },
+        "snmpMonitor": {
+            "dashboard": {
+                "noDataCollected": "Sem dados coletados até o momento",
+                "memoryStatCard": {
+                    "averageMemoryUsage": "Uso médio de memória",
+                    "lastMonth": "Últimos 30 dias"
+                },
+                "cpuStatCard": {
+                    "averageCpuUsage": "Uso médio de CPU",
+                    "lastMonth": "Últimos 30 dias"
+                },
+                "diskStatCard": {
+                    "averageDiskUsage": "Uso médio de disco",
+                    "lastMonth": "Últimos 30 dias"
+                },
+                "cpuUsageLineChart": {
+                    "title": "Uso de CPU"
+                },
+                "diskUsageLineChart": {
+                    "title": "Uso de disco"
+                },
+                "diskUsagePieChart": {
+                    "title": "Distribuição de disco",
+                    "used": "Usado",
+                    "free": "Livre",
+                    "total": "Total",
+                    "inUsage": "Em uso"
+                },
+                "memoryUsageLineChart": {
+                    "title": "Uso de memória"
+                },
+                "memoryUsagePieChart": {
+                    "title": "Distribuição de memória",
+                    "used": "Usado",
+                    "free": "Livre",
+                    "total": "Total",
+                    "inUsage": "Em uso"
+                },
+                "uptimeCard": {
+                    "title": "Tempo de operação",
+                    "days": "Dias",
+                    "hours": "Horas",
+                    "minutes": "Minutos",
+                    "seconds": "Segundos"
+                }
+            }
+        }
+    },
+    "transmitters": {
+        "dataTable": {
+            "headers": {
+                "name": "Nome",
+                "description": "Descrição",
+                "status": "Status",
+                "integration": "Integração",
+                "ipAddress": "Endereço IP",
+                "user": "Usuário",
+                "snmpCommunity": "Community Snmp",
+                "snmpPort": "Porta Snmp",
+                "createdAt": "Criado em",
+                "updatedAt": "Atualizado em"
+            },
+            "deleteSuccess": "Transmissor deletado com sucesso",
+            "deleteError": "Erro ao deletar transmissor"
+        },
+        "createForm": {
+            "fields": {
+                "name": "Nome",
+                "integration": "Integração",
+                "active": "Ativo",
+                "description": "Descrição",
+                "ipAddress": "Endereço IP",
+                "accessUser": "Usuário de acesso",
+                "accessPassword": "Senha de acesso",
+                "snmpCommunity": "Community Snmp",
+                "snmpPort": "Porta Snmp"
+            },
+            "create": "Cadastrar",
+            "save": "Salvar",
+            "successMessages": {
+                "created": "Transmissor cadastrado com sucesso!",
+                "saved":"Transmissor salvo com sucesso!"
+            },
+            "errors": {
+                "error": "Erro ao cadastrar transmissor",
+                "errorSaving": "Erro ao salvar transmissor",
+                "duplicatedTransmitterName": "Já existe um transmissor com o nome informado"
+            }
+        },
+        "schema": {
+            "passwordLength": "A senha deve conter no mínimo 6 caracteres",
+            "invalidIpAddress": "Endereço IP inválido"
+        }
+    },
+    "switches": {
+        "dataTable": {
+            "headers": {
+                "name": "Nome",
+                "description": "Descrição",
+                "status": "Status",
+                "integration": "Integração",
+                "ipAddress": "Endereço IP",
+                "user": "Usuário",
+                "snmpCommunity": "Community Snmp",
+                "snmpPort": "Porta Snmp",
+                "createdAt": "Criado em",
+                "updatedAt": "Atualizado em"
+            },
+            "deleteSuccess": "Switch deletado com sucesso",
+            "deleteError": "Erro ao deletar switch"
+        },
+        "createForm": {
+            "fields": {
+                "name": "Nome",
+                "integration": "Integração",
+                "active": "Ativo",
+                "description": "Descrição",
+                "ipAddress": "Endereço IP",
+                "accessUser": "Usuário de acesso",
+                "accessPassword": "Senha de acesso",
+                "snmpCommunity": "Community Snmp",
+                "snmpPort": "Porta Snmp"
+            },
+            "create": "Cadastrar",
+            "save": "Salvar",
+            "successMessages": {
+                "created": "Switch cadastrado com sucesso!",
+                "saved": "Switch salvo com sucesso!"
+            },
+            "errors": {
+                "error": "Erro ao cadastrar switch",
+                "errorSaving": "Erro ao salvar switch",
+                "duplicatedSwitchName": "Já existe um switch com o nome informado"
+            }
+        },
+        "schema": {
+            "passwordLength": "A senha deve conter no mínimo 6 caracteres",
+            "invalidIpAddress": "Endereço IP inválido"
+        }
+    }
+}

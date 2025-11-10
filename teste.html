@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor SNMP - WebSocket Client</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .connection-panel {
+            padding: 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-connect {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-connect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-disconnect {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-disconnect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 25px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-connected .status-dot {
+            background: #27ae60;
+        }
+
+        .status-disconnected .status-dot {
+            background: #e74c3c;
+        }
+
+        .status-connecting .status-dot {
+            background: #f39c12;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .data-panel {
+            padding: 25px;
+            min-height: 500px;
+        }
+
+        .router-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .router-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .router-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .router-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .router-vendor {
+            background: #3498db;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .metric-unit {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-left: 5px;
+        }
+
+        .timestamp {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            font-size: 1.2rem;
+            margin-top: 50px;
+        }
+
+        .controls-panel {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Monitor SNMP</h1>
+            <p>Cliente WebSocket para Monitoramento de Roteadores</p>
+        </div>
+
+        <div class="connection-panel">
+            <div class="form-group">
+                <label for="serverUrl">Servidor:</label>
+                <input type="text" id="serverUrl" value="ws://localhost:8080/ws/snmp" placeholder="ws://localhost:8080/ws/snmp">
+                
+                <label for="apiUrl">API URL:</label>
+                <input type="text" id="apiUrl" value="http://localhost:8080" placeholder="http://localhost:8080">
+                
+                <label for="routerId">Router ID:</label>
+                <input type="text" id="routerId" placeholder="Digite o ID do roteador">
+                
+                <label for="vendor">Fabricante:</label>
+                <select id="vendor">
+                    <option value="mikrotik">MikroTik</option>
+                    <option value="cisco">Cisco</option>
+                    <option value="juniper">Juniper</option>
+                </select>
+                
+                <button class="btn btn-connect" onclick="connect()">Conectar</button>
+                <button class="btn btn-disconnect" onclick="disconnect()" disabled>Desconectar</button>
+            </div>
+        </div>
+
+        <div class="status status-disconnected">
+            <div class="status-dot"></div>
+            <span id="statusText">Desconectado</span>
+        </div>
+
+        <div class="controls-panel">
+            <button class="btn btn-connect" onclick="startCollection()">Iniciar Coleta</button>
+            <button class="btn btn-disconnect" onclick="stopCollection()">Parar Coleta</button>
+            <button class="btn" onclick="clearData()" style="background: #6c757d; color: white;">Limpar Dados</button>
+        </div>
+
+        <div class="data-panel">
+            <div id="dataContainer" class="no-data">
+                Conecte-se ao WebSocket para começar a receber dados...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let websocket = null;
+        let isConnected = false;
+        let routerData = new Map();
+
+        function updateStatus(status, message) {
+            const statusElement = document.querySelector('.status');
+            const statusText = document.getElementById('statusText');
+            
+            statusElement.className = `status status-${status}`;
+            statusText.textContent = message;
+        }
+
+        function connect() {
+            const serverUrl = document.getElementById('serverUrl').value;
+            const routerId = document.getElementById('routerId').value;
+            const vendor = document.getElementById('vendor').value;
+
+            if (!routerId) {
+                alert('Por favor, digite o ID do roteador');
+                return;
+            }
+
+            const wsUrl = `${serverUrl}?router_id=${encodeURIComponent(routerId)}&vendor=${encodeURIComponent(vendor)}`;
+            
+            updateStatus('connecting', 'Conectando...');
+            
+            try {
+                websocket = new WebSocket(wsUrl);
+                
+                websocket.onopen = function(event) {
+                    console.log('Conectado ao WebSocket', event);
+                    isConnected = true;
+                    updateStatus('connected', `Conectado - Router: ${routerId} (${vendor})`);
+                    
+                    document.querySelector('.btn-connect').disabled = true;
+                    document.querySelector('.btn-disconnect').disabled = false;
+                };
+                
+                websocket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        console.log('Dados recebidos:', data);
+                        updateRouterData(data);
+                    } catch (error) {
+                        console.error('Erro ao parsear dados:', error);
+                    }
+                };
+                
+                websocket.onclose = function(event) {
+                    console.log('Conexão WebSocket fechada', event);
+                    isConnected = false;
+                    updateStatus('disconnected', 'Desconectado');
+                    
+                    document.querySelector('.btn-connect').disabled = false;
+                    document.querySelector('.btn-disconnect').disabled = true;
+                };
+                
+                websocket.onerror = function(error) {
+                    console.error('Erro no WebSocket:', error);
+                    updateStatus('disconnected', 'Erro na conexão');
+                };
+                
+            } catch (error) {
+                console.error('Erro ao criar WebSocket:', error);
+                updateStatus('disconnected', 'Erro ao conectar');
+            }
+        }
+
+        function disconnect() {
+            if (websocket) {
+                websocket.close();
+            }
+        }
+
+        function updateRouterData(data) {
+            routerData.set(data.router_id, data);
+            renderData();
+        }
+
+        function renderData() {
+            const container = document.getElementById('dataContainer');
+            
+            if (routerData.size === 0) {
+                container.innerHTML = '<div class="no-data">Aguardando dados...</div>';
+                return;
+            }
+
+            let html = '';
+            
+            routerData.forEach((data, routerId) => {
+                html += `
+                    <div class="router-card">
+                        <div class="router-header">
+                            <div class="router-name">${data.router_name || routerId}</div>
+                            <div class="router-vendor">${data.vendor}</div>
+                        </div>
+                        
+                        ${data.error ? `<div class="error-message">Erro: ${data.error}</div>` : ''}
+                        
+                        <div class="metrics-grid">
+                            ${renderMetrics(data.data)}
+                        </div>
+                        
+                        <div class="timestamp">
+                            Última atualização: ${new Date(data.timestamp).toLocaleString('pt-BR')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function renderMetrics(data) {
+            if (!data) return '<div class="metric-card">Nenhum dado disponível</div>';
+            
+            let html = '';
+            
+            Object.entries(data).forEach(([key, value]) => {
+                if (value === null || value === undefined) return;
+                
+                const label = formatLabel(key);
+                const formattedValue = formatValue(key, value);
+                
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-label">${label}</div>
+                        <div class="metric-value">${formattedValue}</div>
+                    </div>
+                `;
+            });
+            
+            return html || '<div class="metric-card">Nenhum dado disponível</div>';
+        }
+
+        function formatLabel(key) {
+            const labels = {
+                'used_memory_mb': 'Memória Usada',
+                'cpu_usage_percent': 'Uso da CPU',
+                'uptime_seconds': 'Uptime',
+                'interface_status': 'Status Interface',
+                'bandwidth_usage': 'Uso de Banda'
+            };
+            
+            return labels[key] || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function formatValue(key, value) {
+            if (key.includes('memory') && key.includes('mb')) {
+                return `${value}<span class="metric-unit">MB</span>`;
+            }
+            
+            if (key.includes('cpu') && key.includes('percent')) {
+                return `${value}<span class="metric-unit">%</span>`;
+            }
+            
+            if (key.includes('uptime') && key.includes('seconds')) {
+                const hours = Math.floor(value / 3600);
+                const minutes = Math.floor((value % 3600) / 60);
+                return `${hours}h ${minutes}m`;
+            }
+            
+            if (typeof value === 'number') {
+                return value.toLocaleString('pt-BR');
+            }
+            
+            return value;
+        }
+
+        function startCollection() {
+            const routerId = document.getElementById('routerId').value;
+            const apiUrl = document.getElementById('apiUrl').value;
+            
+            if (!routerId) {
+                alert('Por favor, digite o ID do roteador');
+                return;
+            }
+
+            fetch(`${apiUrl}/api/snmp/start/${encodeURIComponent(routerId)}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Coleta iniciada:', data);
+                alert('Coleta iniciada com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro ao iniciar coleta:', error);
+                alert('Erro ao iniciar coleta');
+            });
+        }
+
+        function stopCollection() {
+            const routerId = document.getElementById('routerId').value;
+            const apiUrl = document.getElementById('apiUrl').value;
+            
+            if (!routerId) {
+                alert('Por favor, digite o ID do roteador');
+                return;
+            }
+
+            fetch(`${apiUrl}/api/snmp/stop/${encodeURIComponent(routerId)}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Coleta parada:', data);
+                alert('Coleta parada com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro ao parar coleta:', error);
+                alert('Erro ao parar coleta');
+            });
+        }
+
+        function clearData() {
+            routerData.clear();
+            renderData();
+        }
+
+        // Reconectar automaticamente se a conexão cair
+        setInterval(() => {
+            if (websocket && websocket.readyState === WebSocket.CLOSED && isConnected) {
+                console.log('Tentando reconectar...');
+                connect();
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+{
+    "languageSelector": {
+        "language": "Language",
+        "pt": "Portuguese",
+        "es": "Spanish",
+        "en": "English"
+    },
+    "loginPage": {
+        "signIn": "Sign In",
+        "email": "Email",
+        "password": "Password",
+        "schema": {
+            "invalidEmail": "Please provide a valid email",
+            "passwordLength": "Password must contain at least 6 characters"
+        },
+        "errors": {
+            "invalidPassword": "Invalid password",
+            "userNotFound": "User not found",
+            "userInactive": "Inactivated user",
+            "loginError": "Error when logging in"
+        }
+    },
+    "sideMenu": {
+        "mainItemsList": {
+            "routers": "Routers",
+            "transmitters": "Transmitters",
+            "switches": "Swithes"
+        }
+    },
+    "dataTable": {
+        "create": "Create",
+        "unsort": "Unsort",
+        "filter": "Filter",
+        "hideColumn": "Hide column",
+        "manageColumns": "Manage columns",
+        "sortDesc": "Sort descending",
+        "sortAsc": "Sort ascending",
+        "rowsPerPage": "Rows per page",
+        "exportCsv": "Export to csv"
+    },
+    "routers": {
+        "dataTable": {
+            "headers": {
+                "name": "Name",
+                "description": "Description",
+                "status": "Status",
+                "integration": "Integration",
+                "ipAddress": "IP Address",
+                "user": "User",
+                "snmpCommunity": "Snmp Community",
+                "snmpPort": "Snmp Port",
+                "createdAt": "Created at",
+                "updatedAt": "Updated at"
+            },
+            "deleteSuccess": "Router deleted successfully",
+            "deleteError": "Error deleting router"
+        },
+        "createForm": {
+            "fields": {
+                "name": "Name",
+                "integration": "Integration",
+                "active": "Active",
+                "description": "Description",
+                "ipAddress": "IP address",
+                "accessUser": "Access user",
+                "accessPassword": "Access password",
+                "snmpCommunity": "Snmp community",
+                "snmpPort": "Snmp port"
+            },
+            "create": "Register",
+            "save": "Save",
+            "successMessages": {
+                "created": "Router registered successfully!",
+                "saved": "Router saved successfully!"
+            },
+            "errors": {
+                "error": "Error registering router",
+                "errorSaving": "Error saving router",
+                "duplicatedRouterName": "A router with the given name already exists"
+            }
+        },
+        "schema": {
+            "passwordLength": "Password must contain at least 6 characters",
+            "invalidIpAddress": "Invalid IP address"
+        },
+        "snmpMonitor": {
+            "noDataCollected": "No data collected yet",
+            "dashboard": {
+                "memoryStatCard": {
+                    "averageMemoryUsage": "Average memory usage",
+                    "lastMonth": "Last 30 days"
+                },
+                "cpuStatCard": {
+                    "averageCpuUsage": "Average CPU usage",
+                    "lastMonth": "Last 30 days"
+                },
+                "diskStatCard": {
+                    "averageDiskUsage": "Average disk usage",
+                    "lastMonth": "Últimos 30 dias"
+                },
+                "cpuUsageLineChart": {
+                    "title": "Uso de CPU"
+                },
+                "diskUsageLineChart": {
+                    "title": "Disk usage"
+                },
+                "diskUsagePieChart": {
+                    "title": "Disk distribution",
+                    "used": "Used",
+                    "free": "Free",
+                    "total": "Total",
+                    "inUsage": "In use"
+                },
+                "memoryUsageLineChart": {
+                    "title": "Memory usage"
+                },
+                "memoryUsagePieChart": {
+                    "title": "Memory distribution",
+                    "used": "Used",
+                    "free": "Free",
+                    "total": "Total",
+                    "inUsage": "In use"
+                },
+                "uptimeCard": {
+                    "title": "Operating time",
+                    "days": "Days",
+                    "hours": "Hours",
+                    "minutes": "Minutes",
+                    "seconds": "Seconds"
+                }
+            }
+        }
+    },
+    "transmitters": {
+        "dataTable": {
+            "headers": {
+                "name": "Name",
+                "description": "Description",
+                "status": "Status",
+                "integration": "Integration",
+                "ipAddress": "IP Address",
+                "user": "User",
+                "snmpCommunity": "Snmp Community",
+                "snmpPort": "Snmp Port",
+                "createdAt": "Created at",
+                "updatedAt": "Updated at"
+            },
+            "deleteSuccess": "Transmitter deleted successfully",
+            "deleteError": "Error deleting transmitter"
+        },
+        "createForm": {
+            "fields": {
+                "name": "Name",
+                "integration": "Integration",
+                "active": "Active",
+                "description": "Description",
+                "ipAddress": "IP address",
+                "accessUser": "Access user",
+                "accessPassword": "Access password",
+                "snmpCommunity": "Snmp community",
+                "snmpPort": "Snmp port"
+            },
+            "create": "Register",
+            "save": "Save",
+            "successMessages": {
+                "created": "Transmitter registered successfully!",
+                "saved": "Transmitter saved successfully!"
+            },
+            "errors": {
+                "error": "Error registering transmitter",
+                "errorSaving": "Error saving transmitter",
+                "duplicatedTransmitterName": "A transmitter with the given name already exists"
+            }
+        },
+        "schema": {
+            "passwordLength": "Password must contain at least 6 characters",
+            "invalidIpAddress": "Invalid IP address"
+        }
+    },
+    "switches": {
+        "dataTable": {
+            "headers": {
+                "name": "Name",
+                "description": "Description",
+                "status": "Status",
+                "integration": "Integration",
+                "ipAddress": "IP Address",
+                "user": "User",
+                "snmpCommunity": "Snmp Community",
+                "snmpPort": "Snmp Port",
+                "createdAt": "Created at",
+                "updatedAt": "Updated at"
+            },
+            "deleteSuccess": "Switch deleted successfully",
+            "deleteError": "Error deleting switch"
+        },
+        "createForm": {
+            "fields": {
+                "name": "Name",
+                "integration": "Integration",
+                "active": "Active",
+                "description": "Description",
+                "ipAddress": "IP address",
+                "accessUser": "Access user",
+                "accessPassword": "Access password",
+                "snmpCommunity": "Snmp community",
+                "snmpPort": "Snmp port"
+            },
+            "create": "Register",
+            "save": "Save",
+            "successMessages": {
+                "created": "Switch registered successfully!",
+                "saved": "Switch saved successfully!"
+            },
+            "errors": {
+                "error": "Error registering switch",
+                "errorSaving": "Error saving switch",
+                "duplicatedTransmitterName": "A switch with the given name already exists"
+            }
+        },
+        "schema": {
+            "passwordLength": "Password must contain at least 6 characters",
+            "invalidIpAddress": "Invalid IP address"
+        }
+    }
+}
