@@ -48,6 +48,25 @@ export function useTransmitters(): UseQueryResult<Transmitter[], AxiosError<APIE
     });
 }
 
+export function useTransmitter(transmitterId: string): UseQueryResult<Transmitter, AxiosError<APIError>> {
+    const { token } = useAuth();
+
+    return useQuery<Transmitter, AxiosError<APIError>>({
+        queryKey: ['transmitter', transmitterId],
+        queryFn: async () => {
+            const response = await axios.get(`http://localhost:9090/api/transmitters/${transmitterId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            return response.data;
+        },
+        staleTime: 1000 * 60 * 5,
+        retry: 1,
+        enabled: !!transmitterId
+    });
+}
+
 export function useDeleteTransmitter() {
     const queryClient = useQueryClient();
     const { token } = useAuth();

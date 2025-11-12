@@ -2,15 +2,18 @@ import type { GridColDef } from "@mui/x-data-grid";
 import { useI18n } from "../../hooks/usei18n";
 import * as React from "react";
 import { Box, Chip } from "@mui/material";
-import GenericDataTable from "../../components/DataTable/DataTable";
+import GenericDataTable, { type CustomAction } from "../../components/DataTable/DataTable";
 import { useDataTableFetch } from "../../api/GenericDataTableFetch";
 import { useDeleteTransmitter, type Transmitter } from "../../api/Transmitters";
 import { toast } from "react-toastify";
 import { ModalCreateEditTransmitter } from "./components/ModalCreateEditTransmitter";
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
+import { useNavigate } from "react-router-dom";
 
 export default function Transmitters() {
     const { t } = useI18n();
     const deleteTransmitterMutation = useDeleteTransmitter();
+    const navigate = useNavigate();
     const [isCreateModalVisible, setIsCreateModalVisible] = React.useState(false);
     const [rowData, setRowData] = React.useState<Transmitter | undefined>(undefined);
 
@@ -121,6 +124,15 @@ export default function Transmitters() {
         }
     ], []);
 
+    const customActions: CustomAction<Transmitter>[] = React.useMemo(() => [
+        {
+            icon: <MonitorHeartIcon />,
+            label: 'Monitor',
+            onClick: (transmitter) => {navigate(`/transmitters/${transmitter.id}`)},
+            show: (transmitter) => transmitter.active
+        }
+    ], []);
+
     const deleteTransmitter = React.useCallback(async (id: string) => {
         return deleteTransmitterMutation.mutateAsync(id);
     }, [deleteTransmitterMutation]);
@@ -144,6 +156,7 @@ export default function Transmitters() {
                 enableRowClick={true}
                 initialPageSize={10}
                 pageSizeOptions={[5, 10, 25, 50]}
+                customActions={customActions}
                 onCreateClick={() => {
                     setRowData(undefined);
                     setIsCreateModalVisible(true);

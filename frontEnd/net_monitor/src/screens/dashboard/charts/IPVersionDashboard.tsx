@@ -1,4 +1,4 @@
-import { Box, Paper, Typography, Grid, Stack } from "@mui/material";
+import { Box, Paper, Typography, Grid, Stack, IconButton } from "@mui/material";
 import {
   Area,
   AreaChart,
@@ -17,9 +17,10 @@ import { useState, useEffect } from "react";
 import {
   useIPVersionFlowsPercent,
   useIPVersionBytes,
+  useIPVersionFlowsPercentByDay,
 } from "../../../api/IPVersionMetrics";
 import RouterIcon from "@mui/icons-material/Router";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const COLORS = {
   ipv4: "#3b82f6",
@@ -39,20 +40,44 @@ interface CustomTooltipProps {
 
 export default function IPVersionDashboard() {
   const [show, setShow] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
   const {
     data: flowData,
     isLoading: flowLoading,
     error: flowError,
   } = useIPVersionFlowsPercent();
+
   const {
     data: bytesData,
     isLoading: bytesLoading,
     error: bytesError,
   } = useIPVersionBytes();
 
+  const { data: hourlyData, isLoading: isLoadingHourly } =
+    useIPVersionFlowsPercentByDay(selectedDate || "");
+
   useEffect(() => {
     setTimeout(() => setShow(true), 300);
   }, []);
+
+  const handlePointClick = (data: any) => {
+    let clickedDate = null;
+
+    if (data && data.activePayload && data.activePayload[0]) {
+      clickedDate = data.activePayload[0].payload?.date;
+    } else if (data && data.activeLabel) {
+      clickedDate = data.activeLabel;
+    }
+
+    if (clickedDate) {
+      setSelectedDate(clickedDate);
+    }
+  };
+
+  const handleBackToDaily = () => {
+    setSelectedDate(null);
+  };
 
   if (flowLoading || bytesLoading) {
     return (
@@ -65,7 +90,20 @@ export default function IPVersionDashboard() {
           minHeight: 400,
         }}
       >
-        <Box className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
+        <Box
+          sx={{
+            width: 48,
+            height: 48,
+            border: "3px solid rgba(59, 130, 246, 0.2)",
+            borderTop: "3px solid #3b82f6",
+            borderRadius: "50%",
+            animation: "spin 1s linear infinite",
+            "@keyframes spin": {
+              "0%": { transform: "rotate(0deg)" },
+              "100%": { transform: "rotate(360deg)" },
+            },
+          }}
+        />
       </Box>
     );
   }
@@ -113,7 +151,6 @@ export default function IPVersionDashboard() {
   ];
 
   const hasMultipleDataPoints = flowData && flowData.length >= 2;
-  const hasSingleDataPoint = flowData && flowData.length === 1;
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -122,6 +159,10 @@ export default function IPVersionDashboard() {
     )
       .toString()
       .padStart(2, "0")}`;
+  };
+
+  const formatHour = (hour: number) => {
+    return `${hour.toString().padStart(2, "0")}:00`;
   };
 
   const formatBytes = (mb: number) => {
@@ -153,7 +194,7 @@ export default function IPVersionDashboard() {
               mb: 1,
             }}
           >
-            Data: {label}
+            {selectedDate ? `Hora: ${label}` : `Data: ${label}`}
           </Typography>
           {payload.map((entry, index) => (
             <Typography
@@ -227,6 +268,10 @@ export default function IPVersionDashboard() {
     return null;
   };
 
+  const chartData = selectedDate ? hourlyData : flowData;
+  const dataKey = selectedDate ? "hour" : "date";
+  const tickFormatter = selectedDate ? formatHour : formatDate;
+
   return (
     <Box
       sx={{
@@ -252,7 +297,9 @@ export default function IPVersionDashboard() {
         <Typography
           sx={{ color: "rgba(255, 255, 255, 0.6)", fontSize: "0.875rem" }}
         >
-          Últimos 30 dias de tráfego da rede
+          {selectedDate
+            ? `Detalhamento horário do dia ${formatDate(selectedDate)}`
+            : "Últimos 30 dias de tráfego da rede"}
         </Typography>
       </Box>
 
@@ -513,18 +560,61 @@ export default function IPVersionDashboard() {
               height: 320,
             }}
           >
-            <Typography
-              variant="subtitle2"
-              sx={{ mb: 2, fontWeight: 500, color: "#e2e8f0" }}
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ mb: 2 }}
             >
-              Percentual de Flows por Versão IP
-            </Typography>
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 500, color: "#e2e8f0" }}
+              >
+                {selectedDate
+                  ? "Percentual de Flows por Hora"
+                  : "Percentual de Flows por Versão IP"}
+              </Typography>
+              {selectedDate && (
+                <IconButton
+                  size="small"
+                  onClick={handleBackToDaily}
+                  sx={{ color: "#3b82f6" }}
+                >
+                  <ArrowBackIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Stack>
 
-            {hasMultipleDataPoints ? (
+            {isLoadingHourly && selectedDate ? (
+              <Box
+                sx={{
+                  height: 240,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    border: "3px solid rgba(59, 130, 246, 0.2)",
+                    borderTop: "3px solid #3b82f6",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                    "@keyframes spin": {
+                      "0%": { transform: "rotate(0deg)" },
+                      "100%": { transform: "rotate(360deg)" },
+                    },
+                  }}
+                />
+              </Box>
+            ) : hasMultipleDataPoints || selectedDate ? (
               <ResponsiveContainer width="100%" height={240}>
                 <AreaChart
-                  data={flowData}
+                  data={chartData}
                   margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
+                  onClick={!selectedDate ? handlePointClick : undefined}
                 >
                   <defs>
                     <linearGradient id="colorIPv4" x1="0" y1="0" x2="0" y2="1">
@@ -558,8 +648,8 @@ export default function IPVersionDashboard() {
                     vertical={false}
                   />
                   <XAxis
-                    dataKey="date"
-                    tickFormatter={formatDate}
+                    dataKey={dataKey}
+                    tickFormatter={tickFormatter}
                     tick={{ fill: "rgba(255, 255, 255, 0.5)", fontSize: 10 }}
                     axisLine={{ stroke: "rgba(255, 255, 255, 0.05)" }}
                   />
@@ -583,6 +673,16 @@ export default function IPVersionDashboard() {
                     fill="url(#colorIPv4)"
                     animationDuration={1000}
                     animationBegin={400}
+                    cursor={!selectedDate ? "pointer" : "default"}
+                    onClick={
+                      !selectedDate
+                        ? (data: any) => {
+                            if (data && data.date) {
+                              setSelectedDate(data.date);
+                            }
+                          }
+                        : undefined
+                    }
                   />
                   <Area
                     type="monotone"
@@ -592,105 +692,19 @@ export default function IPVersionDashboard() {
                     fill="url(#colorIPv6)"
                     animationDuration={1000}
                     animationBegin={600}
+                    cursor={!selectedDate ? "pointer" : "default"}
+                    onClick={
+                      !selectedDate
+                        ? (data: any) => {
+                            if (data && data.date) {
+                              setSelectedDate(data.date);
+                            }
+                          }
+                        : undefined
+                    }
                   />
                 </AreaChart>
               </ResponsiveContainer>
-            ) : hasSingleDataPoint ? (
-              <Box
-                sx={{
-                  height: 240,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Grid container spacing={3} sx={{ maxWidth: 500 }}>
-                  <Grid size={{ xs: 6 }}>
-                    <Box
-                      sx={{
-                        p: 3,
-                        bgcolor: "rgba(59, 130, 246, 0.1)",
-                        border: "2px solid rgba(59, 130, 246, 0.3)",
-                        borderRadius: 2,
-                        textAlign: "center",
-                      }}
-                    >
-                      <TrendingUpIcon
-                        sx={{ color: COLORS.ipv4, fontSize: 40, mb: 1 }}
-                      />
-                      <Typography
-                        sx={{
-                          color: "rgba(255, 255, 255, 0.7)",
-                          fontSize: "0.75rem",
-                          mb: 1,
-                        }}
-                      >
-                        IPv4
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: COLORS.ipv4,
-                          fontSize: "2rem",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {flowData[0].ipv4Percentage.toFixed(1)}%
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: "rgba(255, 255, 255, 0.5)",
-                          fontSize: "0.7rem",
-                          mt: 1,
-                        }}
-                      >
-                        {flowData[0].totalFlows.toLocaleString()} flows
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid size={{ xs: 6 }}>
-                    <Box
-                      sx={{
-                        p: 3,
-                        bgcolor: "rgba(16, 185, 129, 0.1)",
-                        border: "2px solid rgba(16, 185, 129, 0.3)",
-                        borderRadius: 2,
-                        textAlign: "center",
-                      }}
-                    >
-                      <TrendingUpIcon
-                        sx={{ color: COLORS.ipv6, fontSize: 40, mb: 1 }}
-                      />
-                      <Typography
-                        sx={{
-                          color: "rgba(255, 255, 255, 0.7)",
-                          fontSize: "0.75rem",
-                          mb: 1,
-                        }}
-                      >
-                        IPv6
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: COLORS.ipv6,
-                          fontSize: "2rem",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {flowData[0].ipv6Percentage.toFixed(1)}%
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: "rgba(255, 255, 255, 0.5)",
-                          fontSize: "0.7rem",
-                          mt: 1,
-                        }}
-                      >
-                        Data: {formatDate(flowData[0].date)}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Box>
             ) : (
               <Box
                 sx={{
@@ -704,6 +718,21 @@ export default function IPVersionDashboard() {
                   Sem dados disponíveis
                 </Typography>
               </Box>
+            )}
+
+            {!selectedDate && hasMultipleDataPoints && (
+              <>
+                <Typography
+                  sx={{
+                    color: "rgba(255, 255, 255, 0.4)",
+                    fontSize: "0.7rem",
+                    textAlign: "center",
+                    mt: 1,
+                  }}
+                >
+                  Clique em um ponto para ver detalhes por hora
+                </Typography>
+              </>
             )}
           </Paper>
         </Grid>

@@ -10,12 +10,11 @@ import (
 )
 
 const (
-	OID_LINK_DOWN    = "1.3.6.1.6.3.1.1.5.3"
-	OID_LINK_UP      = "1.3.6.1.6.3.1.1.5.4"
-	OID_COLD_START   = "1.3.6.1.6.3.1.1.5.1"
-	OID_WARM_START   = "1.3.6.1.6.3.1.1.5.2"
-	OID_AUTH_FAILURE = "1.3.6.1.6.3.1.1.5.5"
-
+	OID_LINK_DOWN       = "1.3.6.1.6.3.1.1.5.3"
+	OID_LINK_UP         = "1.3.6.1.6.3.1.1.5.4"
+	OID_COLD_START      = "1.3.6.1.6.3.1.1.5.1"
+	OID_WARM_START      = "1.3.6.1.6.3.1.1.5.2"
+	OID_AUTH_FAILURE    = "1.3.6.1.6.3.1.1.5.5"
 	OID_SNMP_TRAP_OID   = "1.3.6.1.6.3.1.1.4.1.0"
 	OID_IF_INDEX        = "1.3.6.1.2.1.2.2.1.1"
 	OID_IF_DESCR        = "1.3.6.1.2.1.2.2.1.2"

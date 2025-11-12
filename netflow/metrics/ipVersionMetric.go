@@ -129,7 +129,7 @@ func (p *IPVersionMetricProcessor) Process(router *models.Roteador, decoded *net
 		p.updatePercentages(ctx, filter)
 	}
 
-	return p.logIPVersionStats(router, decoded.SrcIP, ipv4Count, ipv6Count, ipv4Bytes, ipv6Bytes)
+	return nil
 }
 
 func (p *IPVersionMetricProcessor) updatePercentages(ctx context.Context, filter bson.M) {

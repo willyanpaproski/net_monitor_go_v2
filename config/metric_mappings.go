@@ -69,6 +69,15 @@ var VendorMetricMappings = map[string][]MetricConfig{
 			Required:     true,
 		},
 	},
+	"think": {
+		{
+			Name:         "uptime",
+			Interval:     10 * time.Second,
+			DataKey:      "system_uptime",
+			FallbackKeys: []string{"system_uptime"},
+			Required:     true,
+		},
+	},
 	"cisco": {
 		{
 			Name:         "cpu_usage",

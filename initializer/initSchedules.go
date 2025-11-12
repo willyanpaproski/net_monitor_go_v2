@@ -1,12 +1,12 @@
 package initializer
 
 import (
+	"net_monitor/db"
 	models "net_monitor/models"
 	repository "net_monitor/repository"
-	mikrotik "net_monitor/snmp/Mikrotik"
-	mikrotikScheduler "net_monitor/snmp/Mikrotik/Schedules"
 	services "net_monitor/services"
-	"net_monitor/db"
+	mikrotik "net_monitor/snmp/mikrotik"
+	mikrotikScheduler "net_monitor/snmp/mikrotik/Schedules"
 )
 
 func InitSchedules() *services.SchedulerManager {

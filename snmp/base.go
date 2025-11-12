@@ -3,6 +3,7 @@ package snmp
 import (
 	"fmt"
 	models "net_monitor/models"
+	"net_monitor/services"
 	"strconv"
 
 	"github.com/gosnmp/gosnmp"
@@ -189,13 +190,13 @@ func GetTreeAsIndexMap(snmp *gosnmp.GoSNMP, baseOid string, useBulk bool) (map[s
 	return indexMap, nil
 }
 
-func GetTimeTicksOid(snmp *gosnmp.GoSNMP, oid string, resource string, router models.Roteador) (string, error) {
+func GetTimeTicksOid(snmp *gosnmp.GoSNMP, oid string, resource string, device services.NetworkDevice) (string, error) {
 	result, err := snmp.Get([]string{oid})
 	if err != nil {
 		return "", err
 	}
 	if len(result.Variables) == 0 {
-		return "", fmt.Errorf("No result for %v of %v:%v", resource, router.Name, router.IPAddress)
+		return "", fmt.Errorf("No result for %v of %v:%v", resource, device.GetName(), device.GetIPAddress())
 	}
 	value := result.Variables[0].Value
 	switch v := value.(type) {
@@ -213,11 +214,11 @@ func GetTimeTicksOid(snmp *gosnmp.GoSNMP, oid string, resource string, router mo
 		}
 		return formatted, nil
 	default:
-		return "", fmt.Errorf("Invalid type for TimeTicks (%T) for %v of %v:%v", value, resource, router.Name, router.IPAddress)
+		return "", fmt.Errorf("Invalid type for TimeTicks (%T) for %v of %v:%v", value, resource, device.GetName(), device.GetIPAddress())
 	}
 }
 
-func GetIntOid(snmp *gosnmp.GoSNMP, oid string, resource string, router models.Roteador) (int, error) {
+func GetIntOid(snmp *gosnmp.GoSNMP, oid string, resource string, device services.NetworkDevice) (int, error) {
 	result, err := snmp.Get([]string{oid})
 	if err != nil {
 		return 0, err
@@ -235,13 +236,13 @@ func GetIntOid(snmp *gosnmp.GoSNMP, oid string, resource string, router models.R
 		case int:
 			return v, nil
 		default:
-			return 0, fmt.Errorf("Invalid type for %v of %v:%v", resource, router.Name, router.IPAddress)
+			return 0, fmt.Errorf("Invalid type for %v of %v:%v", resource, device.GetName(), device.GetIPAddress())
 		}
 	}
-	return 0, fmt.Errorf("Error collecting %v for %v:%v", resource, router.Name, router.IPAddress)
+	return 0, fmt.Errorf("Error collecting %v for %v:%v", resource, device.GetName(), device.GetIPAddress())
 }
 
-func GetStringOid(snmp *gosnmp.GoSNMP, oid string, resource string, router models.Roteador) (string, error) {
+func GetStringOid(snmp *gosnmp.GoSNMP, oid string, resource string, device services.NetworkDevice) (string, error) {
 	result, err := snmp.Get([]string{oid})
 	if err != nil {
 		return "", err
@@ -254,8 +255,8 @@ func GetStringOid(snmp *gosnmp.GoSNMP, oid string, resource string, router model
 		case string:
 			return v, nil
 		default:
-			return "", fmt.Errorf("Invalid type for %v of %v:%v", resource, router.Name, router.IPAddress)
+			return "", fmt.Errorf("Invalid type for %v of %v:%v", resource, device.GetName(), device.GetIPAddress())
 		}
 	}
-	return "", fmt.Errorf("Error collecting %v for %v:%v", resource, router.Name, router.IPAddress)
+	return "", fmt.Errorf("Error collecting %v for %v:%v", resource, device.GetName(), device.GetIPAddress())
 }

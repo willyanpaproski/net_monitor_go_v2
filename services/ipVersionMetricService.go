@@ -16,6 +16,7 @@ type IPVersionMetricService interface {
 	GetIPVersionFlowsPercentByRouter(routerId string) ([]IPVersionDailyData, error)
 	GetIPVersionBytes() ([]IPVersionBytesDailyData, error)
 	GetIPVersionBytesByRouter(routerId string) ([]IPVersionBytesDailyData, error)
+	GetIPVersionFlowsPercentByDay(date string) ([]IPVersionHourlyData, error)
 }
 
 type IPVersionDailyData struct {
@@ -33,6 +34,13 @@ type IPVersionBytesDailyData struct {
 	IPv6MB     float64 `json:"ipv6MB"`
 	TotalBytes uint64  `json:"totalBytes"`
 	TotalMB    float64 `json:"totalMB"`
+}
+
+type IPVersionHourlyData struct {
+	Hour           int     `json:"hour"`
+	IPv4Percentage float64 `json:"ipv4Percentage"`
+	IPv6Percentage float64 `json:"ipv6Percentage"`
+	TotalFlows     uint64  `json:"totalFlows"`
 }
 
 type ipVersionMetricServiceImpl struct {
@@ -441,4 +449,133 @@ func (s *ipVersionMetricServiceImpl) GetIPVersionBytesByRouter(routerId string) 
 	}
 
 	return results, nil
+}
+
+func (s *ipVersionMetricServiceImpl) GetIPVersionFlowsPercentByDay(date string) ([]IPVersionHourlyData, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	targetDate, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return nil, fmt.Errorf("formato de data inválido: %w", err)
+	}
+
+	brazilLocation := time.FixedZone("BRT", -3*60*60)
+
+	startOfDay := time.Date(targetDate.Year(), targetDate.Month(), targetDate.Day(),
+		0, 0, 0, 0, brazilLocation).UTC()
+
+	endOfDay := time.Date(targetDate.Year(), targetDate.Month(), targetDate.Day(),
+		23, 59, 59, 999999999, brazilLocation).UTC()
+
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"timestamp": bson.M{
+					"$gte": primitive.NewDateTimeFromTime(startOfDay),
+					"$lte": primitive.NewDateTimeFromTime(endOfDay),
+				},
+			},
+		},
+		{
+			"$addFields": bson.M{
+				"brazilHour": bson.M{
+					"$hour": bson.M{
+						"date":     "$timestamp",
+						"timezone": "-03:00",
+					},
+				},
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": "$brazilHour",
+				"totalIPv4Flows": bson.M{
+					"$sum": "$ipv4FlowCount",
+				},
+				"totalIPv6Flows": bson.M{
+					"$sum": "$ipv6FlowCount",
+				},
+			},
+		},
+		{
+			"$addFields": bson.M{
+				"totalFlows": bson.M{
+					"$add": []interface{}{"$totalIPv4Flows", "$totalIPv6Flows"},
+				},
+			},
+		},
+		{
+			"$addFields": bson.M{
+				"ipv4Percentage": bson.M{
+					"$cond": bson.M{
+						"if":   bson.M{"$eq": []interface{}{"$totalFlows", 0}},
+						"then": 0,
+						"else": bson.M{
+							"$multiply": []interface{}{
+								bson.M{"$divide": []interface{}{"$totalIPv4Flows", "$totalFlows"}},
+								100,
+							},
+						},
+					},
+				},
+				"ipv6Percentage": bson.M{
+					"$cond": bson.M{
+						"if":   bson.M{"$eq": []interface{}{"$totalFlows", 0}},
+						"then": 0,
+						"else": bson.M{
+							"$multiply": []interface{}{
+								bson.M{"$divide": []interface{}{"$totalIPv6Flows", "$totalFlows"}},
+								100,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			"$sort": bson.M{"_id": 1},
+		},
+		{
+			"$project": bson.M{
+				"_id":            0,
+				"hour":           "$_id",
+				"ipv4Percentage": 1,
+				"ipv6Percentage": 1,
+				"totalFlows":     1,
+			},
+		},
+	}
+
+	cursor, err := s.repo.Collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao agregar métricas horárias: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var results []IPVersionHourlyData
+	if err = cursor.All(ctx, &results); err != nil {
+		return nil, fmt.Errorf("erro ao decodificar resultados: %w", err)
+	}
+
+	hourMap := make(map[int]IPVersionHourlyData)
+	for _, r := range results {
+		hourMap[r.Hour] = r
+	}
+
+	finalResults := make([]IPVersionHourlyData, 24)
+	for i := 0; i < 24; i++ {
+		if data, exists := hourMap[i]; exists {
+			finalResults[i] = data
+		} else {
+			finalResults[i] = IPVersionHourlyData{
+				Hour:           i,
+				IPv4Percentage: 0,
+				IPv6Percentage: 0,
+				TotalFlows:     0,
+			}
+		}
+	}
+
+	return finalResults, nil
 }

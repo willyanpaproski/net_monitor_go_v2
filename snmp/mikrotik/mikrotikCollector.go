@@ -5,7 +5,7 @@ import (
 	"time"
 
 	models "net_monitor/models"
-	mikrotiksnmpcollectors "net_monitor/snmp/Mikrotik/MikrotikSnmpCollectors"
+	mikrotiksnmpcollectors "net_monitor/snmp/mikrotik/MikrotikSnmpCollectors"
 	Utils "net_monitor/utils"
 
 	"github.com/gosnmp/gosnmp"

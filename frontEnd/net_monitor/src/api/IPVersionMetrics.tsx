@@ -39,6 +39,24 @@ export function useIPVersionFlowsPercent(): UseQueryResult<IPVersionDailyData[],
     });
 }
 
+export function useIPVersionFlowsPercentByDay(date: string): UseQueryResult<IPVersionDailyData[], AxiosError<APIError>> {
+    const { token } = useAuth();
+
+    return useQuery<IPVersionDailyData[], AxiosError<APIError>>({
+        queryKey: ['ipVersion', 'flowPercent', date],
+        queryFn: async () => {
+            const response = await axios.get(`http://localhost:9090/api/metrics/ipVersion/flowPercent/day/${date}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            return response.data
+        },
+        staleTime: 1000 * 60 * 5,
+        retry: 1
+    })
+}
+
 export function useIPVersionBytes(): UseQueryResult<IPVersionBytesDailyData[], AxiosError<APIError>> {
     const { token } = useAuth();
 

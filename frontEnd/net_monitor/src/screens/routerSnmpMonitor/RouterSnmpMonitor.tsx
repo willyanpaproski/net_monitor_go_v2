@@ -1,7 +1,7 @@
 import { useSnmpMonitor } from "../../hooks/useSnmpMonitor";
 import { useEffect, useMemo } from "react";
 import { Box, Tabs, Tab } from "@mui/material";
-import { Dashboard as DashboardIcon, SettingsEthernet, HubOutlined } from "@mui/icons-material";
+import { Dashboard, SettingsEthernet, HubOutlined } from "@mui/icons-material";
 import { useParams, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRouter } from "../../api/Routers";
 import { useI18n } from "../../hooks/usei18n";
@@ -241,7 +241,7 @@ export default function RouterSnmpMonitor() {
                     }}
                 >
                     <Tab 
-                        icon={<DashboardIcon />} 
+                        icon={<Dashboard />} 
                         iconPosition="start" 
                         label="Dashboard"
                         value={`/router/${routerId}`}

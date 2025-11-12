@@ -71,3 +71,12 @@ func (c *IPVersionMetricController) GetIPVersionBytesByRouter(goGin *gin.Context
 	}
 	goGin.JSON(http.StatusOK, metrics)
 }
+
+func (c *IPVersionMetricController) GetIPVersionFlowsPercentByDay(goGin *gin.Context) {
+	date := goGin.Param("date")
+	metrics, err := c.Service.GetIPVersionFlowsPercentByDay(date)
+	if err != nil {
+		goGin.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+	goGin.JSON(http.StatusOK, metrics)
+}

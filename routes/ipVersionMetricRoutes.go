@@ -22,6 +22,7 @@ func SetupIPVersionMetricRoutes(
 			ipVersionMetrics.GET("/flowPercent/:routerId", ipVersionController.GetIPVersionFlowsPercentByRouter)
 			ipVersionMetrics.GET("/bandWidthUsage", ipVersionController.GetIPVersionBytes)
 			ipVersionMetrics.GET("/bandWidthUsage/:routerId", ipVersionController.GetIPVersionBytesByRouter)
+			ipVersionMetrics.GET("/flowPercent/day/:date", ipVersionController.GetIPVersionFlowsPercentByDay)
 		}
 	}
 }

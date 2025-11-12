@@ -9,7 +9,7 @@ import (
 	"net_monitor/netflow/metrics"
 	repository "net_monitor/repository"
 	routes "net_monitor/routes"
-	mikrotik "net_monitor/snmp/Mikrotik"
+	mikrotik "net_monitor/snmp/mikrotik"
 	"net_monitor/snmp/trap/handlers"
 	"time"
 

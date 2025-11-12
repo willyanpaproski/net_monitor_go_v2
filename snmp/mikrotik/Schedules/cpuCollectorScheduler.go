@@ -1,10 +1,10 @@
 package mikrotikScheduler
 
 import (
+	interfaces "net_monitor/interfaces"
 	models "net_monitor/models"
 	repository "net_monitor/repository"
-	mikrotik "net_monitor/snmp/Mikrotik"
-	interfaces "net_monitor/interfaces"
+	mikrotik "net_monitor/snmp/mikrotik"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"

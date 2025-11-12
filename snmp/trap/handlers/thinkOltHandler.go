@@ -12,12 +12,10 @@ import (
 const (
 	THINK_BASE_OID                = "1.3.6.1.4.1.17409"
 	THINK_ONU_CONFIG_STATE_CHANGE = "1.3.6.1.4.1.17409.2.2.12.1.2.7.0"
-
-	// Adicione outros OIDs conforme necessário
-	THINK_ONU_ALARM_OID       = "1.3.6.1.4.1.17409.2.2.12.1.2.6.0"
-	THINK_ONU_STATUS_OID      = "1.3.6.1.4.1.17409.2.2.12.1.2.4.0"
-	THINK_ONU_INFO_OID        = "1.3.6.1.4.1.17409.2.2.12.1.2.1.0"
-	THINK_ONU_DESCRIPTION_OID = "1.3.6.1.4.1.17409.2.2.12.1.2.3.0"
+	THINK_ONU_ALARM_OID           = "1.3.6.1.4.1.17409.2.2.12.1.2.6.0"
+	THINK_ONU_STATUS_OID          = "1.3.6.1.4.1.17409.2.2.12.1.2.4.0"
+	THINK_ONU_INFO_OID            = "1.3.6.1.4.1.17409.2.2.12.1.2.1.0"
+	THINK_ONU_DESCRIPTION_OID     = "1.3.6.1.4.1.17409.2.2.12.1.2.3.0"
 )
 
 type ThinkOltTrapHandler struct {
