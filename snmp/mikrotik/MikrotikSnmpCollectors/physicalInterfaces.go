@@ -2,9 +2,9 @@ package mikrotiksnmpcollectors
 
 import (
 	"fmt"
-	models "net_monitor/models"
+	"net_monitor/interfaces"
 	snmp "net_monitor/snmp"
-	"net_monitor/utils"
+	Utils "net_monitor/utils"
 	"strings"
 
 	"github.com/gosnmp/gosnmp"
@@ -48,7 +48,7 @@ func GetInterfaceIPs(goSnmp *gosnmp.GoSNMP) (map[string][]string, error) {
 	return interfaceIPs, nil
 }
 
-func CollectMikrotikPhysicalInterfaces(goSnmp *gosnmp.GoSNMP, router models.Roteador) ([]PhysicalInterface, error) {
+func CollectMikrotikPhysicalInterfaces(goSnmp *gosnmp.GoSNMP, device interfaces.NetworkDevice) ([]PhysicalInterface, error) {
 	baseOidName := "1.3.6.1.2.1.2.2.1.2"
 	baseOidType := "1.3.6.1.2.1.2.2.1.3"
 	baseOidMac := "1.3.6.1.2.1.2.2.1.6"

@@ -22,6 +22,7 @@ interface SnmpMonitorConfig {
     reconnectInterval?: number;
     autoReconnect?: boolean;
     maxDataPoints?: number;
+    vendor: string;
 }
 
 type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';
@@ -52,7 +53,7 @@ interface UseSnmpMonitorReturn {
     websocketRef: React.RefObject<WebSocket | null>;
 }
 
-export const useSnmpMonitor = (config: SnmpMonitorConfig = {}): UseSnmpMonitorReturn => {
+export const useSnmpMonitor = (config: SnmpMonitorConfig): UseSnmpMonitorReturn => {
     const { token } = useAuth();
 
     const {
@@ -60,7 +61,8 @@ export const useSnmpMonitor = (config: SnmpMonitorConfig = {}): UseSnmpMonitorRe
         apiUrl = 'http://localhost:9090',
         reconnectInterval = 5000,
         autoReconnect = true,
-        maxDataPoints = 50
+        maxDataPoints = 50,
+        vendor
     } = config;
 
     const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -104,7 +106,7 @@ export const useSnmpMonitor = (config: SnmpMonitorConfig = {}): UseSnmpMonitorRe
         isConnectingRef.current = false;
     }, []);
 
-    const connect = useCallback(async (deviceId: string, vendor: string = 'mikrotik'): Promise<boolean> => {
+    const connect = useCallback(async (deviceId: string): Promise<boolean> => {
         if (!deviceId) {
             setError('ID do dispositivo é obrigatório');
             return false;
@@ -238,7 +240,7 @@ export const useSnmpMonitor = (config: SnmpMonitorConfig = {}): UseSnmpMonitorRe
                         reconnectTimerRef.current = setTimeout(() => {
                             if (currentDeviceRef.current && shouldReconnectRef.current) {
                                 console.log('🔄 Reconectando...');
-                                connect(currentDeviceRef.current, currentVendorRef.current || 'mikrotik');
+                                connect(currentDeviceRef.current);
                             }
                         }, reconnectInterval);
                     }

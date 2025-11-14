@@ -10,6 +10,7 @@ import (
 	repository "net_monitor/repository"
 	routes "net_monitor/routes"
 	mikrotik "net_monitor/snmp/mikrotik"
+	thinkolt "net_monitor/snmp/think"
 	"net_monitor/snmp/trap/handlers"
 	"time"
 
@@ -140,6 +141,9 @@ func InitDependencies(router *gin.Engine) {
 	mikrotikCollector := mikrotik.NewMikrotikCollector()
 	snmpService.RegisterCollector(mikrotikCollector)
 
+	thinkCollector := thinkolt.NewThinkCollector()
+	snmpService.RegisterCollector(thinkCollector)
+
 	routes.SetupWebSocketRoutes(router, hub, snmpService)
 
 	logCollection := db.GetCollection("log")
@@ -172,7 +176,6 @@ func InitDependencies(router *gin.Engine) {
 	netflow.InitializeMetrics(db.GetDatabase(), roteadorRepo)
 	log.Println("MetricContext inicializado com MongoDB e RouterRepository")
 
-	//netflow.RegisterMetricProcessor(metrics.NewInterfaceMetricProcessor())
 	netflow.RegisterMetricProcessor(metrics.NewIPVersionMetricProcessor())
 
 	log.Println("Processadores de Métricas Registrados:")

@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"fmt"
-	"time"
-
 	"net_monitor/interfaces"
+	"time"
 
 	"github.com/gosnmp/gosnmp"
 )

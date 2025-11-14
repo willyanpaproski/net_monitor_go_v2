@@ -18,7 +18,8 @@ export default function TransmitterSnmpMonitor() {
         serverUrl: "ws://localhost:9090/ws/snmp",
         autoReconnect: true,
         reconnectInterval: 5000,
-        maxDataPoints: 10
+        maxDataPoints: 10,
+        vendor: 'thinkOlt'
     });
 
     useEffect(() => {
@@ -33,7 +34,7 @@ export default function TransmitterSnmpMonitor() {
         initCollection();
         return () => {
             if (transmitterId) {
-                monitor.startCollection(transmitterId);
+                monitor.stopCollection(transmitterId);
                 monitor.disconnect();
             }
         }
@@ -49,7 +50,9 @@ export default function TransmitterSnmpMonitor() {
     };
 
     const outletContext = {
-        uptime
+        uptime,
+        websocketRef: monitor.websocketRef,
+        isConnected: monitor.isConnected
     }
 
     if (transmitter.isLoading) {

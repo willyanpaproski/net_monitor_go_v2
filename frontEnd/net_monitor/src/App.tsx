@@ -16,6 +16,7 @@ import RouterDashboard from "./screens/routerSnmpMonitor/RouterDashboard";
 import RouterInterfaces from "./screens/routerSnmpMonitor/RouterInterfaces";
 import RouterVlans from "./screens/routerSnmpMonitor/RouterVlans";
 import TransmitterSnmpMonitor from "./screens/transmitterSnmpMonitor/TransmitterSnmpMonitor";
+import TransmitterDashboard from "./screens/transmitterSnmpMonitor/TransmitterDashboard";
 
 export type APIError = {
   error : {
@@ -54,15 +55,6 @@ export default function App() {
                 />
 
                 <Route 
-                  path="/transmitters/:transmitterId"
-                  element={
-                    <ProtectedRoute>
-                      <TransmitterSnmpMonitor />
-                    </ProtectedRoute>
-                  }
-                />
-
-                <Route 
                   path="/switches"
                   element={
                     <ProtectedRoute>
@@ -82,6 +74,17 @@ export default function App() {
                   <Route index element={<RouterDashboard />} />
                   <Route path="interfaces" element={<RouterInterfaces />} />
                   <Route path="vlans" element={<RouterVlans />} />
+                </Route>
+
+                <Route 
+                  path="/transmitters/:transmitterId"
+                  element={
+                    <ProtectedRoute>
+                      <TransmitterSnmpMonitor />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<TransmitterDashboard />} />
                 </Route>
                 
                 <Route 

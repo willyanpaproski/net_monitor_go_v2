@@ -4,6 +4,7 @@ import (
 	interfaces "net_monitor/interfaces"
 	models "net_monitor/models"
 	repository "net_monitor/repository"
+	"net_monitor/services"
 	mikrotik "net_monitor/snmp/mikrotik"
 	"time"
 
@@ -67,12 +68,13 @@ func (s *CPUScheduler) collectAllCpuUsage() {
 		return
 	}
 	for _, router := range routers {
-		go s.collectCpuUsage(router)
+		routerDevice := services.RouterAdapter{Router: router}
+		go s.collectCpuUsage(routerDevice)
 	}
 }
 
-func (s *CPUScheduler) collectCpuUsage(router models.Roteador) {
-	cpuUsage, err := s.Collector.CollectMetric(router, "cpu_usage")
+func (s *CPUScheduler) collectCpuUsage(device interfaces.NetworkDevice) {
+	cpuUsage, err := s.Collector.CollectMetric(device, "cpu_usage")
 	if err != nil {
 		return
 	}
@@ -91,7 +93,7 @@ func (s *CPUScheduler) collectCpuUsage(router models.Roteador) {
 		},
 	}
 	err = s.RouterRepo.UpdateByFilter(
-		bson.M{"_id": router.ID},
+		bson.M{"_id": device.GetID()},
 		update,
 	)
 	if err != nil {

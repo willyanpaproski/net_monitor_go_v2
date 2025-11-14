@@ -18,7 +18,8 @@ export default function RouterSnmpMonitor() {
         serverUrl: "ws://localhost:9090/ws/snmp",
         autoReconnect: true,
         reconnectInterval: 5000,
-        maxDataPoints: 10
+        maxDataPoints: 10,
+        vendor: 'mikrotik'
     });
 
     useEffect(() => {

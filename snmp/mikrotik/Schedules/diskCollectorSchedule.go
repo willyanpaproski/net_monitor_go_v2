@@ -4,6 +4,7 @@ import (
 	"net_monitor/interfaces"
 	models "net_monitor/models"
 	repository "net_monitor/repository"
+	"net_monitor/services"
 	mikrotik "net_monitor/snmp/mikrotik"
 	"time"
 
@@ -67,12 +68,13 @@ func (s *DiskScheduler) CollectAllDiskUsage() {
 		return
 	}
 	for _, router := range routers {
-		go s.CollectDiskUsage(router)
+		routerDevice := services.RouterAdapter{Router: router}
+		go s.CollectDiskUsage(routerDevice)
 	}
 }
 
-func (s *DiskScheduler) CollectDiskUsage(router models.Roteador) {
-	diskUsage, err := s.Collector.CollectMetric(router, "disk_usage")
+func (s *DiskScheduler) CollectDiskUsage(device interfaces.NetworkDevice) {
+	diskUsage, err := s.Collector.CollectMetric(device, "disk_usage")
 	if err != nil {
 		return
 	}
@@ -91,7 +93,7 @@ func (s *DiskScheduler) CollectDiskUsage(router models.Roteador) {
 		},
 	}
 	err = s.RouterRepo.UpdateByFilter(
-		bson.M{"_id": router.ID},
+		bson.M{"_id": device.GetID()},
 		update,
 	)
 	if err != nil {

@@ -19,7 +19,7 @@ func StartMetricWorkers(decodedRabbit *RabbitMQ, routerRepo repository.MongoRepo
 	if len(processors) == 0 {
 		log.Printf("AVISO: Nenhum processador de métrica registrado!")
 	} else {
-		log.Printf("Processadores de métricas registrados:")
+		//log.Printf("Processadores de métricas registrados:")
 		for _, p := range processors {
 			log.Printf("  - %s", p.Name())
 		}
@@ -27,12 +27,12 @@ func StartMetricWorkers(decodedRabbit *RabbitMQ, routerRepo repository.MongoRepo
 
 	for i := 0; i < workerCount; i++ {
 		go func(workerId int) {
-			log.Printf("Metric worker %d iniciado com %d processadores", workerId, len(processors))
+			//log.Printf("Metric worker %d iniciado com %d processadores", workerId, len(processors))
 
 			for d := range deliveries {
 				var dm DecodedIPFIXMessage
 				if err := json.Unmarshal(d.Body, &dm); err != nil {
-					log.Printf("metric worker %d erro unmarshal msg: %v", workerId, err)
+					//log.Printf("metric worker %d erro unmarshal msg: %v", workerId, err)
 					d.Nack(false, false)
 					continue
 				}
@@ -40,24 +40,24 @@ func StartMetricWorkers(decodedRabbit *RabbitMQ, routerRepo repository.MongoRepo
 				var roteador *models.Roteador
 				routers, err := routerRepo.GetByFilter(bson.M{"ipAddress": dm.SrcIP})
 				if err != nil {
-					log.Printf("metric worker %d erro buscando roteador: %v", workerId, err)
+					//log.Printf("metric worker %d erro buscando roteador: %v", workerId, err)
 				}
 
 				if len(routers) > 0 {
 					roteador = &routers[0]
-					log.Printf("metric worker %d roteador encontrado: %s (%s) - %d flows",
-						workerId, roteador.Name, roteador.IPAddress, len(dm.FlowRecords))
+					// log.Printf("metric worker %d roteador encontrado: %s (%s) - %d flows",
+					// 	workerId, roteador.Name, roteador.IPAddress, len(dm.FlowRecords))
 				} else {
 					roteador = nil
-					log.Printf("metric worker %d nenhum roteador encontrado para IP %s - %d flows",
-						workerId, dm.SrcIP, len(dm.FlowRecords))
+					// log.Printf("metric worker %d nenhum roteador encontrado para IP %s - %d flows",
+					// 	workerId, dm.SrcIP, len(dm.FlowRecords))
 				}
 
 				hasError := false
 				for _, processor := range processors {
 					if err := processor.Process(roteador, &dm); err != nil {
-						log.Printf("metric worker %d erro no processador '%s': %v",
-							workerId, processor.Name(), err)
+						// log.Printf("metric worker %d erro no processador '%s': %v",
+						// 	workerId, processor.Name(), err)
 						hasError = true
 					}
 				}

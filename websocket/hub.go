@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"net_monitor/interfaces"
 	models "net_monitor/models"
 
 	"github.com/gorilla/websocket"
@@ -34,7 +35,7 @@ type Client struct {
 }
 
 type SNMPCollector interface {
-	Collect(router models.Roteador) (map[string]interface{}, error)
+	Collect(device interfaces.NetworkDevice) (map[string]interface{}, error)
 	GetVendor() string
 }
 

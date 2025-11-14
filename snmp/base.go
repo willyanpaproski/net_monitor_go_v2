@@ -2,8 +2,8 @@ package snmp
 
 import (
 	"fmt"
+	"net_monitor/interfaces"
 	models "net_monitor/models"
-	"net_monitor/services"
 	"strconv"
 
 	"github.com/gosnmp/gosnmp"
@@ -190,7 +190,7 @@ func GetTreeAsIndexMap(snmp *gosnmp.GoSNMP, baseOid string, useBulk bool) (map[s
 	return indexMap, nil
 }
 
-func GetTimeTicksOid(snmp *gosnmp.GoSNMP, oid string, resource string, device services.NetworkDevice) (string, error) {
+func GetTimeTicksOid(snmp *gosnmp.GoSNMP, oid string, resource string, device interfaces.NetworkDevice) (string, error) {
 	result, err := snmp.Get([]string{oid})
 	if err != nil {
 		return "", err
@@ -218,7 +218,7 @@ func GetTimeTicksOid(snmp *gosnmp.GoSNMP, oid string, resource string, device se
 	}
 }
 
-func GetIntOid(snmp *gosnmp.GoSNMP, oid string, resource string, device services.NetworkDevice) (int, error) {
+func GetIntOid(snmp *gosnmp.GoSNMP, oid string, resource string, device interfaces.NetworkDevice) (int, error) {
 	result, err := snmp.Get([]string{oid})
 	if err != nil {
 		return 0, err
@@ -242,7 +242,7 @@ func GetIntOid(snmp *gosnmp.GoSNMP, oid string, resource string, device services
 	return 0, fmt.Errorf("Error collecting %v for %v:%v", resource, device.GetName(), device.GetIPAddress())
 }
 
-func GetStringOid(snmp *gosnmp.GoSNMP, oid string, resource string, device services.NetworkDevice) (string, error) {
+func GetStringOid(snmp *gosnmp.GoSNMP, oid string, resource string, device interfaces.NetworkDevice) (string, error) {
 	result, err := snmp.Get([]string{oid})
 	if err != nil {
 		return "", err

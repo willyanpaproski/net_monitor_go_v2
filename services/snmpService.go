@@ -21,18 +21,6 @@ const (
 	DeviceTypeSwitch DeviceType = "switch"
 )
 
-type NetworkDevice interface {
-	GetID() string
-	GetName() string
-	GetIntegration() string
-	GetIPAddress() string
-	GetSnmpCommunity() string
-	GetSnmpPort() string
-	GetAccessUser() string
-	GetAccessPassword() string
-	IsActive() bool
-}
-
 type RouterAdapter struct {
 	Router models.Roteador
 }
@@ -76,7 +64,7 @@ func (s SwitchAdapter) GetAccessPassword() string { return s.Switch.AccessPasswo
 func (s SwitchAdapter) IsActive() bool            { return s.Switch.Active }
 
 type DeviceService interface {
-	GetByID(id string) (NetworkDevice, DeviceType, error)
+	GetByID(id string) (interfaces.NetworkDevice, DeviceType, error)
 }
 
 type UnifiedDeviceService struct {
@@ -97,16 +85,16 @@ func NewUnifiedDeviceService(
 	}
 }
 
-func (u *UnifiedDeviceService) GetByID(id string) (NetworkDevice, DeviceType, error) {
-	if router, err := u.roteadorService.GetById(id); err == nil {
+func (u *UnifiedDeviceService) GetByID(id string) (interfaces.NetworkDevice, DeviceType, error) {
+	if router, err := u.roteadorService.GetById(id); err == nil && router != nil {
 		return RouterAdapter{Router: *router}, DeviceTypeRouter, nil
 	}
 
-	if olt, err := u.transmissorFibraService.GetById(id); err == nil {
+	if olt, err := u.transmissorFibraService.GetById(id); err == nil && olt != nil {
 		return OLTAdapter{OLT: *olt}, DeviceTypeOLT, nil
 	}
 
-	if sw, err := u.switchRedeService.GetById(id); err == nil {
+	if sw, err := u.switchRedeService.GetById(id); err == nil && sw != nil {
 		return SwitchAdapter{Switch: *sw}, DeviceTypeSwitch, nil
 	}
 
@@ -123,7 +111,7 @@ type SNMPService struct {
 
 type DeviceCollection struct {
 	DeviceID   string
-	Device     NetworkDevice
+	Device     interfaces.NetworkDevice
 	DeviceType DeviceType
 	Collector  interfaces.SNMPCollector
 	Metrics    map[string]*MetricCollection
@@ -210,15 +198,13 @@ func (s *SNMPService) StartCollectionWithConfig(deviceID string) error {
 		StopCh:     make(chan struct{}),
 	}
 
-	router := s.convertToRoteador(device)
-
 	for _, config := range configs {
 		metric := &MetricCollection{
 			Name:   config.Name,
 			Config: config,
 		}
 
-		metric.CollectFn = s.createGenericCollectFunction(collector, router, config)
+		metric.CollectFn = s.createGenericCollectFunction(collector, device, config)
 		collection.Metrics[config.Name] = metric
 	}
 
@@ -255,7 +241,7 @@ func (s *SNMPService) StopCollection(deviceID string) {
 	}
 }
 
-func (s *SNMPService) convertToRoteador(device NetworkDevice) models.Roteador {
+func (s *SNMPService) convertToRoteador(device interfaces.NetworkDevice) models.Roteador {
 	return models.Roteador{
 		Name:           device.GetName(),
 		IPAddress:      device.GetIPAddress(),
@@ -270,20 +256,20 @@ func (s *SNMPService) convertToRoteador(device NetworkDevice) models.Roteador {
 
 func (s *SNMPService) createGenericCollectFunction(
 	collector interfaces.SNMPCollector,
-	router models.Roteador,
+	device interfaces.NetworkDevice,
 	metricConfig config.MetricConfig,
 ) func() (interface{}, error) {
 
 	return func() (interface{}, error) {
 		if extendedCollector, ok := collector.(interfaces.ExtendedSNMPCollector); ok {
-			value, err := extendedCollector.CollectMetric(router, metricConfig.Name)
+			value, err := extendedCollector.CollectMetric(device, metricConfig.Name)
 			if err == nil && value != nil {
 				return value, nil
 			}
 			log.Printf("Collector estendido falhou para %s, tentando fallback: %v", metricConfig.Name, err)
 		}
 
-		data, err := collector.Collect(router)
+		data, err := collector.Collect(device)
 		if err != nil {
 			return nil, err
 		}
@@ -304,7 +290,7 @@ func (s *SNMPService) createGenericCollectFunction(
 				metricConfig.Name, metricConfig.DataKey, metricConfig.FallbackKeys)
 		}
 
-		log.Printf("Métrica opcional '%s' não encontrada para %s", metricConfig.Name, router.Name)
+		log.Printf("Métrica opcional '%s' não encontrada para %s", metricConfig.Name, device.GetName())
 		return nil, nil
 	}
 }

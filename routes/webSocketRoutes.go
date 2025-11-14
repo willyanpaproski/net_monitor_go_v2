@@ -14,13 +14,10 @@ func SetupWebSocketRoutes(
 	hub *websocket.Hub,
 	snmpService *services.SNMPService,
 ) {
-	// Rota WebSocket SNMP - aceita device_id, router_id, olt_id ou switch_id
 	router.GET("/ws/snmp", gin.WrapH(http.HandlerFunc(hub.ServeWS)))
 
-	// Grupo de rotas API para controle SNMP
 	api := router.Group("/api/snmp")
 	{
-		// Rota compatível com versão anterior (usando router_id)
 		api.POST("/start/:router_id", func(c *gin.Context) {
 			deviceID := c.Param("router_id")
 
@@ -38,7 +35,6 @@ func SetupWebSocketRoutes(
 			c.JSON(http.StatusOK, gin.H{"message": "Coleta interrompida"})
 		})
 
-		// Novas rotas genéricas para qualquer dispositivo
 		api.POST("/device/start/:device_id", func(c *gin.Context) {
 			deviceID := c.Param("device_id")
 
@@ -56,13 +52,11 @@ func SetupWebSocketRoutes(
 			c.JSON(http.StatusOK, gin.H{"message": "Coleta interrompida com sucesso"})
 		})
 
-		// Rota para obter status das coletas ativas
 		api.GET("/status", func(c *gin.Context) {
 			status := snmpService.GetActiveCollections()
 			c.JSON(http.StatusOK, gin.H{"active_collections": status})
 		})
 
-		// Rota para verificar se uma coleta específica está ativa
 		api.GET("/status/:device_id", func(c *gin.Context) {
 			deviceID := c.Param("device_id")
 			isActive := snmpService.IsCollectionActive(deviceID)
@@ -73,7 +67,6 @@ func SetupWebSocketRoutes(
 			})
 		})
 
-		// Rotas específicas para OLTs
 		api.POST("/olt/start/:olt_id", func(c *gin.Context) {
 			oltID := c.Param("olt_id")
 
@@ -91,7 +84,6 @@ func SetupWebSocketRoutes(
 			c.JSON(http.StatusOK, gin.H{"message": "Coleta de OLT interrompida"})
 		})
 
-		// Rotas específicas para Switches
 		api.POST("/switch/start/:switch_id", func(c *gin.Context) {
 			switchID := c.Param("switch_id")
 

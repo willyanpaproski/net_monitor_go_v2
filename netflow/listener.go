@@ -42,7 +42,7 @@ func StartListener(rabbit *RabbitMQ, listenAddr string) error {
 			if err := rabbit.PublishPacket(msg); err != nil {
 				log.Printf("Erro publicando no rabbit: %v", err)
 			} else {
-				log.Printf("Packet recebido de %s:%d - tamanho %d publicado na fila", msg.SrcIP, msg.SrcPort, len(payload))
+				//log.Printf("Packet recebido de %s:%d - tamanho %d publicado na fila", msg.SrcIP, msg.SrcPort, len(payload))
 			}
 		}
 	}()

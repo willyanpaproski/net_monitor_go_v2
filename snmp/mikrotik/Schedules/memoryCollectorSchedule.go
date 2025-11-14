@@ -6,6 +6,7 @@ import (
 	"net_monitor/interfaces"
 	models "net_monitor/models"
 	repository "net_monitor/repository"
+	"net_monitor/services"
 	mikrotik "net_monitor/snmp/mikrotik"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -68,12 +69,13 @@ func (s *MemoryScheduler) collectAllMemoryUsage() {
 		return
 	}
 	for _, router := range routers {
-		go s.collectRouterMemory(router)
+		routerDevice := services.RouterAdapter{Router: router}
+		go s.collectRouterMemory(routerDevice)
 	}
 }
 
-func (s *MemoryScheduler) collectRouterMemory(router models.Roteador) {
-	memoryUsage, err := s.Collector.CollectMetric(router, "memory_usage")
+func (s *MemoryScheduler) collectRouterMemory(device interfaces.NetworkDevice) {
+	memoryUsage, err := s.Collector.CollectMetric(device, "memory_usage")
 	if err != nil {
 		return
 	}
@@ -92,7 +94,7 @@ func (s *MemoryScheduler) collectRouterMemory(router models.Roteador) {
 		},
 	}
 	err = s.RoteadorRepo.UpdateByFilter(
-		bson.M{"_id": router.ID},
+		bson.M{"_id": device.GetID()},
 		update,
 	)
 	if err != nil {

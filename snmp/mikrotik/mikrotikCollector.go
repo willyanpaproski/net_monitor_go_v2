@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	models "net_monitor/models"
+	"net_monitor/interfaces"
 	mikrotiksnmpcollectors "net_monitor/snmp/mikrotik/MikrotikSnmpCollectors"
 	Utils "net_monitor/utils"
 
@@ -21,8 +21,8 @@ func (m *MikrotikCollector) GetVendor() string {
 	return "mikrotik"
 }
 
-func (m *MikrotikCollector) Collect(roteador models.Roteador) (map[string]interface{}, error) {
-	snmpParams, err := m.createSNMPParams(roteador)
+func (m *MikrotikCollector) Collect(device interfaces.NetworkDevice) (map[string]interface{}, error) {
+	snmpParams, err := m.createSNMPParams(device)
 	if err != nil {
 		return nil, err
 	}
@@ -30,39 +30,39 @@ func (m *MikrotikCollector) Collect(roteador models.Roteador) (map[string]interf
 
 	data := make(map[string]interface{})
 
-	if cpu, err := mikrotiksnmpcollectors.CollectMikrotikCpuUtilizationPercent(snmpParams, roteador); err == nil {
+	if cpu, err := mikrotiksnmpcollectors.CollectMikrotikCpuUtilizationPercent(snmpParams, device); err == nil {
 		data["cpu_usage_percent"] = cpu
 	}
 
-	if memory, err := mikrotiksnmpcollectors.CollectMikrotikUsedMemory(snmpParams, roteador); err == nil {
+	if memory, err := mikrotiksnmpcollectors.CollectMikrotikUsedMemory(snmpParams, device); err == nil {
 		data["used_memory_mb"] = memory
 	}
 
-	if totalMemory, err := mikrotiksnmpcollectors.CollectMikrotikTotalMemory(snmpParams, roteador); err == nil {
+	if totalMemory, err := mikrotiksnmpcollectors.CollectMikrotikTotalMemory(snmpParams, device); err == nil {
 		data["total_memory_mb"] = totalMemory
 	}
 
-	if diskUsage, err := mikrotiksnmpcollectors.CollectMikrotikUsedHdd(snmpParams, roteador); err == nil {
+	if diskUsage, err := mikrotiksnmpcollectors.CollectMikrotikUsedHdd(snmpParams, device); err == nil {
 		data["used_disk_mb"] = diskUsage
 	}
 
-	if totalDisk, err := mikrotiksnmpcollectors.CollectMikrotikTotalHdd(snmpParams, roteador); err == nil {
+	if totalDisk, err := mikrotiksnmpcollectors.CollectMikrotikTotalHdd(snmpParams, device); err == nil {
 		data["total_disk_mb"] = totalDisk
 	}
 
-	if uptime, err := mikrotiksnmpcollectors.CollectMikrotikUptime(snmpParams, roteador); err == nil {
+	if uptime, err := mikrotiksnmpcollectors.CollectMikrotikUptime(snmpParams, device); err == nil {
 		data["system_uptime"] = uptime
 	}
 
-	if physicalInterfaces, err := mikrotiksnmpcollectors.CollectMikrotikPhysicalInterfaces(snmpParams, roteador); err == nil {
+	if physicalInterfaces, err := mikrotiksnmpcollectors.CollectMikrotikPhysicalInterfaces(snmpParams, device); err == nil {
 		data["physicalInterfaces"] = physicalInterfaces
 	}
 
 	return data, nil
 }
 
-func (m *MikrotikCollector) CollectMetric(router models.Roteador, metricName string) (interface{}, error) {
-	snmpParams, err := m.createSNMPParams(router)
+func (m *MikrotikCollector) CollectMetric(device interfaces.NetworkDevice, metricName string) (interface{}, error) {
+	snmpParams, err := m.createSNMPParams(device)
 	if err != nil {
 		return nil, err
 	}
@@ -70,21 +70,21 @@ func (m *MikrotikCollector) CollectMetric(router models.Roteador, metricName str
 
 	switch metricName {
 	case "cpu_usage":
-		return mikrotiksnmpcollectors.CollectMikrotikCpuUtilizationPercent(snmpParams, router)
+		return mikrotiksnmpcollectors.CollectMikrotikCpuUtilizationPercent(snmpParams, device)
 	case "memory_usage":
-		return mikrotiksnmpcollectors.CollectMikrotikUsedMemory(snmpParams, router)
+		return mikrotiksnmpcollectors.CollectMikrotikUsedMemory(snmpParams, device)
 	case "disk_usage":
-		return mikrotiksnmpcollectors.CollectMikrotikUsedHdd(snmpParams, router)
+		return mikrotiksnmpcollectors.CollectMikrotikUsedHdd(snmpParams, device)
 	case "total_disk":
-		return mikrotiksnmpcollectors.CollectMikrotikTotalHdd(snmpParams, router)
+		return mikrotiksnmpcollectors.CollectMikrotikTotalHdd(snmpParams, device)
 	case "total_memory":
-		return mikrotiksnmpcollectors.CollectMikrotikTotalMemory(snmpParams, router)
+		return mikrotiksnmpcollectors.CollectMikrotikTotalMemory(snmpParams, device)
 	case "uptime":
-		return mikrotiksnmpcollectors.CollectMikrotikUptime(snmpParams, router)
+		return mikrotiksnmpcollectors.CollectMikrotikUptime(snmpParams, device)
 	case "physicalInterfaces":
-		return mikrotiksnmpcollectors.CollectMikrotikPhysicalInterfaces(snmpParams, router)
+		return mikrotiksnmpcollectors.CollectMikrotikPhysicalInterfaces(snmpParams, device)
 	case "vlans":
-		return mikrotiksnmpcollectors.CollectMikrotikVlans(snmpParams, router)
+		return mikrotiksnmpcollectors.CollectMikrotikVlans(snmpParams, device)
 	default:
 		return nil, fmt.Errorf("Metric '%s' not supported by Mikrotik collector", metricName)
 	}
@@ -110,16 +110,16 @@ func (m *MikrotikCollector) GetMetricMapping() map[string]string {
 	}
 }
 
-func (m *MikrotikCollector) createSNMPParams(router models.Roteador) (*gosnmp.GoSNMP, error) {
-	snmpPort, err := Utils.ParseInt(router.SnmpPort)
+func (m *MikrotikCollector) createSNMPParams(device interfaces.NetworkDevice) (*gosnmp.GoSNMP, error) {
+	snmpPort, err := Utils.ParseInt(device.GetSnmpPort())
 	if err != nil {
 		return nil, err
 	}
 
 	params := &gosnmp.GoSNMP{
-		Target:    router.IPAddress,
+		Target:    device.GetIPAddress(),
 		Port:      uint16(snmpPort),
-		Community: router.SnmpCommunity,
+		Community: device.GetSnmpCommunity(),
 		Version:   gosnmp.Version2c,
 		Timeout:   2 * time.Second,
 		Retries:   1,
