@@ -17,34 +17,44 @@ interface UptimeData {
 }
 
 const GradientCard = styled(Card)(() => ({
-  background:
-    "linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%)",
+  background: "linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%)",
   borderRadius: "16px",
-  border: "1px solid rgba(34, 197, 94, 0.2)",
-  backdropFilter: "blur(10px)",
+  border: "1px solid rgba(0, 212, 255, 0.2)",
+  backdropFilter: "blur(20px)",
+  transition: "all 0.3s ease",
+  "&:hover": {
+    border: "1px solid rgba(0, 212, 255, 0.4)",
+    boxShadow: "0 8px 32px rgba(0, 212, 255, 0.15)",
+    transform: "translateY(-2px)",
+  },
 }));
 
 const IconWrapper = styled(Box)({
-  width: "20px",
-  height: "20px",
+  width: "48px",
+  height: "48px",
   borderRadius: "12px",
-  background:
-    "linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)",
+  background: "linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  border: "1px solid rgba(34, 197, 94, 0.3)",
+  border: "1px solid rgba(0, 212, 255, 0.3)",
 });
 
 const TimeSegment = styled(Box)({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  padding: "10px 14px",
-  borderRadius: "10px",
-  background: "rgba(34, 197, 94, 0.08)",
-  border: "1px solid rgba(34, 197, 94, 0.15)",
-  minWidth: "60px",
+  padding: "12px 16px",
+  borderRadius: "12px",
+  background: "rgba(0, 212, 255, 0.08)",
+  border: "1px solid rgba(0, 212, 255, 0.15)",
+  minWidth: "70px",
+  transition: "all 0.3s ease",
+  "&:hover": {
+    background: "rgba(0, 212, 255, 0.12)",
+    border: "1px solid rgba(0, 212, 255, 0.25)",
+    transform: "translateY(-2px)",
+  },
 });
 
 export default function UptimeCard({ uptime }: UptimeCardProps) {
@@ -134,38 +144,46 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
 
   const totalHours = currentUptime.days * 24 + currentUptime.hours;
   const getUptimeStatus = () => {
-    if (totalHours < 1) return { text: "Recently Started", color: "warning" };
-    if (totalHours < 24) return { text: "Active Today", color: "info" };
-    if (totalHours < 168)
-      return { text: "Running This Week", color: "success" };
-    return { text: "Long-term Stable", color: "success" };
+    if (totalHours < 1) return { text: "Iniciado Recentemente", color: "warning" };
+    if (totalHours < 24) return { text: "Ativo Hoje", color: "info" };
+    if (totalHours < 168) return { text: "Executando Esta Semana", color: "success" };
+    return { text: "Estável a Longo Prazo", color: "success" };
   };
 
   const status = getUptimeStatus();
 
   return (
     <GradientCard>
-      <CardContent>
-        <Stack spacing={1}>
+      <CardContent sx={{ p: 3 }}>
+        <Stack spacing={2}>
           <Stack
             direction="row"
             alignItems="center"
             justifyContent="space-between"
           >
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" alignItems="center" spacing={2}>
               <IconWrapper>
-                <AccessTimeIcon sx={{ color: "#22c55e", fontSize: 28 }} />
+                <AccessTimeIcon sx={{ color: "#00d4ff", fontSize: 24 }} />
               </IconWrapper>
               <Box>
                 <Typography
-                  variant="h6"
+                  variant="h5"
                   sx={{
-                    color: "#e2e8f0",
-                    fontWeight: 600,
-                    fontSize: "18px",
+                    color: "#f8fafc",
+                    fontWeight: 700,
+                    fontSize: "1.25rem",
                   }}
                 >
                   {t("routers.snmpMonitor.dashboard.uptimeCard.title")}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "rgba(248, 250, 252, 0.7)",
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  Tempo de atividade do roteador
                 </Typography>
               </Box>
             </Stack>
@@ -177,25 +195,26 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
               sx={{
                 backgroundColor:
                   status.color === "success"
-                    ? "rgba(34, 197, 94, 0.15)"
+                    ? "rgba(0, 212, 255, 0.15)"
                     : status.color === "warning"
                     ? "rgba(251, 191, 36, 0.15)"
                     : "rgba(59, 130, 246, 0.15)",
                 color:
                   status.color === "success"
-                    ? "#22c55e"
+                    ? "#00d4ff"
                     : status.color === "warning"
                     ? "#fbbf24"
                     : "#3b82f6",
                 border: `1px solid ${
                   status.color === "success"
-                    ? "rgba(34, 197, 94, 0.3)"
+                    ? "rgba(0, 212, 255, 0.3)"
                     : status.color === "warning"
                     ? "rgba(251, 191, 36, 0.3)"
                     : "rgba(59, 130, 246, 0.3)"
                 }`,
                 fontWeight: 600,
-                fontSize: "11px",
+                fontSize: "0.75rem",
+                height: "32px",
                 "& .MuiChip-icon": {
                   color: "inherit",
                 },
@@ -214,9 +233,9 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
                 <Typography
                   variant="h3"
                   sx={{
-                    color: "#22c55e",
-                    fontWeight: 700,
-                    fontSize: "32px",
+                    color: "#00d4ff",
+                    fontWeight: 800,
+                    fontSize: "2rem",
                     lineHeight: 1,
                   }}
                 >
@@ -225,8 +244,8 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
                 <Typography
                   variant="caption"
                   sx={{
-                    color: "rgba(226, 232, 240, 0.7)",
-                    fontSize: "11px",
+                    color: "rgba(248, 250, 252, 0.7)",
+                    fontSize: "0.75rem",
                     fontWeight: 600,
                     mt: 0.5,
                   }}
@@ -240,9 +259,9 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
               <Typography
                 variant="h3"
                 sx={{
-                  color: "#22c55e",
-                  fontWeight: 700,
-                  fontSize: "32px",
+                  color: "#00d4ff",
+                  fontWeight: 800,
+                  fontSize: "2rem",
                   lineHeight: 1,
                 }}
               >
@@ -251,8 +270,8 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "rgba(226, 232, 240, 0.7)",
-                  fontSize: "11px",
+                  color: "rgba(248, 250, 252, 0.7)",
+                  fontSize: "0.75rem",
                   fontWeight: 600,
                   mt: 0.5,
                 }}
@@ -265,9 +284,9 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
               <Typography
                 variant="h3"
                 sx={{
-                  color: "#22c55e",
-                  fontWeight: 700,
-                  fontSize: "32px",
+                  color: "#00d4ff",
+                  fontWeight: 800,
+                  fontSize: "2rem",
                   lineHeight: 1,
                 }}
               >
@@ -276,8 +295,8 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "rgba(226, 232, 240, 0.7)",
-                  fontSize: "11px",
+                  color: "rgba(248, 250, 252, 0.7)",
+                  fontSize: "0.75rem",
                   fontWeight: 600,
                   mt: 0.5,
                 }}
@@ -290,9 +309,9 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
               <Typography
                 variant="h3"
                 sx={{
-                  color: "#22c55e",
-                  fontWeight: 700,
-                  fontSize: "32px",
+                  color: "#00d4ff",
+                  fontWeight: 800,
+                  fontSize: "2rem",
                   lineHeight: 1,
                 }}
               >
@@ -301,8 +320,8 @@ export default function UptimeCard({ uptime }: UptimeCardProps) {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "rgba(226, 232, 240, 0.7)",
-                  fontSize: "11px",
+                  color: "rgba(248, 250, 252, 0.7)",
+                  fontSize: "0.75rem",
                   fontWeight: 600,
                   mt: 0.5,
                 }}

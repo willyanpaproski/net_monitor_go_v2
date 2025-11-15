@@ -23,8 +23,10 @@ import RouterIcon from "@mui/icons-material/Router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const COLORS = {
-  ipv4: "#3b82f6",
+  ipv4: "#00d4ff",
   ipv6: "#10b981",
+  accent: "#a855f7",
+  warning: "#f97316",
 };
 
 interface CustomTooltipProps {
@@ -94,8 +96,8 @@ export default function IPVersionDashboard() {
           sx={{
             width: 48,
             height: 48,
-            border: "3px solid rgba(59, 130, 246, 0.2)",
-            borderTop: "3px solid #3b82f6",
+            border: "3px solid rgba(0, 212, 255, 0.2)",
+            borderTop: "3px solid #00d4ff",
             borderRadius: "50%",
             animation: "spin 1s linear infinite",
             "@keyframes spin": {
@@ -116,9 +118,11 @@ export default function IPVersionDashboard() {
             p: 3,
             bgcolor: "rgba(239, 68, 68, 0.1)",
             border: "1px solid rgba(239, 68, 68, 0.3)",
+            borderRadius: "12px",
+            backdropFilter: "blur(10px)",
           }}
         >
-          <Typography color="error">
+          <Typography color="error" sx={{ fontWeight: 500 }}>
             Erro ao carregar métricas de IPv4/IPv6
           </Typography>
         </Paper>
@@ -182,13 +186,16 @@ export default function IPVersionDashboard() {
         <Paper
           sx={{
             p: 2,
-            bgcolor: "#0C1017",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            bgcolor: "rgba(19, 23, 34, 0.95)",
+            border: "1px solid rgba(0, 212, 255, 0.3)",
+            borderRadius: "8px",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
           }}
         >
           <Typography
             sx={{
-              color: "#e2e8f0",
+              color: "#f8fafc",
               fontSize: "0.875rem",
               fontWeight: 600,
               mb: 1,
@@ -199,7 +206,11 @@ export default function IPVersionDashboard() {
           {payload.map((entry, index) => (
             <Typography
               key={index}
-              sx={{ color: entry.color, fontSize: "0.8rem" }}
+              sx={{ 
+                color: entry.color, 
+                fontSize: "0.8rem",
+                fontWeight: 500,
+              }}
             >
               {entry.name === "ipv4Percentage" ? "IPv4" : "IPv6"}:{" "}
               {entry.value.toFixed(2)}%
@@ -208,9 +219,10 @@ export default function IPVersionDashboard() {
           {payload[0]?.payload?.totalFlows && (
             <Typography
               sx={{
-                color: "rgba(255, 255, 255, 0.6)",
+                color: "rgba(248, 250, 252, 0.6)",
                 fontSize: "0.75rem",
                 mt: 1,
+                fontWeight: 500,
               }}
             >
               Total de Flows: {payload[0].payload.totalFlows.toLocaleString()}
@@ -228,13 +240,16 @@ export default function IPVersionDashboard() {
         <Paper
           sx={{
             p: 2,
-            bgcolor: "#0C1017",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            bgcolor: "rgba(19, 23, 34, 0.95)",
+            border: "1px solid rgba(0, 212, 255, 0.3)",
+            borderRadius: "8px",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
           }}
         >
           <Typography
             sx={{
-              color: "#e2e8f0",
+              color: "#f8fafc",
               fontSize: "0.875rem",
               fontWeight: 600,
               mb: 1,
@@ -245,7 +260,11 @@ export default function IPVersionDashboard() {
           {payload.map((entry, index) => (
             <Typography
               key={index}
-              sx={{ color: entry.color, fontSize: "0.8rem" }}
+              sx={{ 
+                color: entry.color, 
+                fontSize: "0.8rem",
+                fontWeight: 500,
+              }}
             >
               {entry.name === "ipv4MB" ? "Volume IPv4" : "Volume IPv6"}:{" "}
               {formatBytes(entry.value)}
@@ -254,9 +273,10 @@ export default function IPVersionDashboard() {
           {payload[0]?.payload?.totalMB && (
             <Typography
               sx={{
-                color: "rgba(255, 255, 255, 0.6)",
+                color: "rgba(248, 250, 252, 0.6)",
                 fontSize: "0.75rem",
                 mt: 1,
+                fontWeight: 500,
               }}
             >
               Volume Total: {formatBytes(payload[0].payload.totalMB)}
@@ -277,65 +297,101 @@ export default function IPVersionDashboard() {
       sx={{
         p: { xs: 2, md: 3 },
         opacity: show ? 1 : 0,
-        transition: "opacity 0.5s",
+        transition: "opacity 0.5s ease-in-out",
       }}
     >
-      <Box sx={{ mb: 3 }}>
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-          <RouterIcon sx={{ color: "#3b82f6", fontSize: 28 }} />
-          <Typography
-            variant="h5"
+      {/* Header Section */}
+      <Box sx={{ mb: 4 }}>
+        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1.5 }}>
+          <Box
             sx={{
-              color: "#e2e8f0",
-              fontWeight: 700,
-              fontSize: { xs: "1.25rem", md: "1.5rem" },
+              p: 1.5,
+              backgroundColor: "rgba(0, 212, 255, 0.1)",
+              borderRadius: "12px",
+              border: "1px solid rgba(0, 212, 255, 0.2)",
             }}
           >
-            Análise IPv4 vs IPv6
-          </Typography>
+            <RouterIcon sx={{ color: "#00d4ff", fontSize: 28 }} />
+          </Box>
+          <Box>
+            <Typography
+              variant="h4"
+              sx={{
+                color: "#f8fafc",
+                fontWeight: 700,
+                fontSize: { xs: "1.5rem", md: "2rem" },
+                background: "linear-gradient(135deg, #00d4ff 0%, #0099cc 100%)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Análise IPv4 vs IPv6
+            </Typography>
+            <Typography
+              sx={{ 
+                color: "rgba(248, 250, 252, 0.7)", 
+                fontSize: "0.9rem",
+                fontWeight: 500,
+              }}
+            >
+              {selectedDate
+                ? `Detalhamento horário do dia ${formatDate(selectedDate)}`
+                : "Monitoramento de tráfego em tempo real"}
+            </Typography>
+          </Box>
         </Stack>
-        <Typography
-          sx={{ color: "rgba(255, 255, 255, 0.6)", fontSize: "0.875rem" }}
-        >
-          {selectedDate
-            ? `Detalhamento horário do dia ${formatDate(selectedDate)}`
-            : "Últimos 30 dias de tráfego da rede"}
-        </Typography>
       </Box>
 
-      <Grid container spacing={2} sx={{ mb: 3 }}>
+      {/* Metrics Grid */}
+      <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Paper
             elevation={0}
             sx={{
-              p: 2.5,
-              bgcolor: "#0C1017",
-              border: "1px solid rgba(59, 130, 246, 0.2)",
-              borderRadius: 2,
-              backdropFilter: "blur(10px)",
+              p: 3,
+              bgcolor: "rgba(19, 23, 34, 0.8)",
+              border: "1px solid rgba(0, 212, 255, 0.2)",
+              borderRadius: "16px",
+              backdropFilter: "blur(20px)",
+              backgroundImage: "linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, transparent 100%)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                border: "1px solid rgba(0, 212, 255, 0.4)",
+                boxShadow: "0 12px 40px rgba(0, 212, 255, 0.15)",
+              },
             }}
           >
             <Typography
               sx={{
-                color: "rgba(255, 255, 255, 0.6)",
-                fontSize: "0.75rem",
-                mb: 0.5,
+                color: "rgba(248, 250, 252, 0.7)",
+                fontSize: "0.8rem",
+                mb: 1,
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
               Média IPv4
             </Typography>
             <Typography
               sx={{
-                color: "#3b82f6",
-                fontSize: "1.75rem",
-                fontWeight: 700,
-                mb: 0.5,
+                color: "#00d4ff",
+                fontSize: "2.25rem",
+                fontWeight: 800,
+                mb: 1,
+                lineHeight: 1,
               }}
             >
               {avgIPv4Percentage.toFixed(1)}%
             </Typography>
             <Typography
-              sx={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "0.7rem" }}
+              sx={{ 
+                color: "rgba(248, 250, 252, 0.6)", 
+                fontSize: "0.75rem",
+                fontWeight: 500,
+              }}
             >
               {formatBytes(totalIPv4MB)}
             </Typography>
@@ -346,18 +402,28 @@ export default function IPVersionDashboard() {
           <Paper
             elevation={0}
             sx={{
-              p: 2.5,
-              bgcolor: "#0C1017",
+              p: 3,
+              bgcolor: "rgba(19, 23, 34, 0.8)",
               border: "1px solid rgba(16, 185, 129, 0.2)",
-              borderRadius: 2,
-              backdropFilter: "blur(10px)",
+              borderRadius: "16px",
+              backdropFilter: "blur(20px)",
+              backgroundImage: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                border: "1px solid rgba(16, 185, 129, 0.4)",
+                boxShadow: "0 12px 40px rgba(16, 185, 129, 0.15)",
+              },
             }}
           >
             <Typography
               sx={{
-                color: "rgba(255, 255, 255, 0.6)",
-                fontSize: "0.75rem",
-                mb: 0.5,
+                color: "rgba(248, 250, 252, 0.7)",
+                fontSize: "0.8rem",
+                mb: 1,
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
               Média IPv6
@@ -365,15 +431,20 @@ export default function IPVersionDashboard() {
             <Typography
               sx={{
                 color: "#10b981",
-                fontSize: "1.75rem",
-                fontWeight: 700,
-                mb: 0.5,
+                fontSize: "2.25rem",
+                fontWeight: 800,
+                mb: 1,
+                lineHeight: 1,
               }}
             >
               {avgIPv6Percentage.toFixed(1)}%
             </Typography>
             <Typography
-              sx={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "0.7rem" }}
+              sx={{ 
+                color: "rgba(248, 250, 252, 0.6)", 
+                fontSize: "0.75rem",
+                fontWeight: 500,
+              }}
             >
               {formatBytes(totalIPv6MB)}
             </Typography>
@@ -384,18 +455,28 @@ export default function IPVersionDashboard() {
           <Paper
             elevation={0}
             sx={{
-              p: 2.5,
-              bgcolor: "#0C1017",
+              p: 3,
+              bgcolor: "rgba(19, 23, 34, 0.8)",
               border: "1px solid rgba(168, 85, 247, 0.2)",
-              borderRadius: 2,
-              backdropFilter: "blur(10px)",
+              borderRadius: "16px",
+              backdropFilter: "blur(20px)",
+              backgroundImage: "linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, transparent 100%)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                border: "1px solid rgba(168, 85, 247, 0.4)",
+                boxShadow: "0 12px 40px rgba(168, 85, 247, 0.15)",
+              },
             }}
           >
             <Typography
               sx={{
-                color: "rgba(255, 255, 255, 0.6)",
-                fontSize: "0.75rem",
-                mb: 0.5,
+                color: "rgba(248, 250, 252, 0.7)",
+                fontSize: "0.8rem",
+                mb: 1,
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
               Total de Flows
@@ -403,19 +484,24 @@ export default function IPVersionDashboard() {
             <Typography
               sx={{
                 color: "#a855f7",
-                fontSize: "1.75rem",
-                fontWeight: 700,
-                mb: 0.5,
+                fontSize: "2.25rem",
+                fontWeight: 800,
+                mb: 1,
+                lineHeight: 1,
               }}
             >
               {totalFlows >= 1000
                 ? `${(totalFlows / 1000).toFixed(1)}K`
-                : totalFlows}
+                : totalFlows.toLocaleString()}
             </Typography>
             <Typography
-              sx={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "0.7rem" }}
+              sx={{ 
+                color: "rgba(248, 250, 252, 0.6)", 
+                fontSize: "0.75rem",
+                fontWeight: 500,
+              }}
             >
-              {totalFlows.toLocaleString()} flows
+              {totalFlows.toLocaleString()} conexões
             </Typography>
           </Paper>
         </Grid>
@@ -424,18 +510,28 @@ export default function IPVersionDashboard() {
           <Paper
             elevation={0}
             sx={{
-              p: 2.5,
-              bgcolor: "#0C1017",
+              p: 3,
+              bgcolor: "rgba(19, 23, 34, 0.8)",
               border: "1px solid rgba(249, 115, 22, 0.2)",
-              borderRadius: 2,
-              backdropFilter: "blur(10px)",
+              borderRadius: "16px",
+              backdropFilter: "blur(20px)",
+              backgroundImage: "linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, transparent 100%)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                border: "1px solid rgba(249, 115, 22, 0.4)",
+                boxShadow: "0 12px 40px rgba(249, 115, 22, 0.15)",
+              },
             }}
           >
             <Typography
               sx={{
-                color: "rgba(255, 255, 255, 0.6)",
-                fontSize: "0.75rem",
-                mb: 0.5,
+                color: "rgba(248, 250, 252, 0.7)",
+                fontSize: "0.8rem",
+                mb: 1,
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
               Volume Total
@@ -444,14 +540,19 @@ export default function IPVersionDashboard() {
               sx={{
                 color: "#f97316",
                 fontSize: "1.75rem",
-                fontWeight: 700,
-                mb: 0.5,
+                fontWeight: 800,
+                mb: 1,
+                lineHeight: 1.2,
               }}
             >
               {formatBytes(totalMB)}
             </Typography>
             <Typography
-              sx={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "0.7rem" }}
+              sx={{ 
+                color: "rgba(248, 250, 252, 0.6)", 
+                fontSize: "0.75rem",
+                fontWeight: 500,
+              }}
             >
               Tráfego acumulado
             </Typography>
@@ -459,126 +560,155 @@ export default function IPVersionDashboard() {
         </Grid>
       </Grid>
 
-      <Grid container spacing={2}>
+      {/* Charts Grid */}
+      <Grid container spacing={3}>
+        {/* Pie Chart */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper
             elevation={0}
             sx={{
-              p: 2.5,
-              bgcolor: "#0C1017",
-              border: "1px solid rgba(59, 130, 246, 0.2)",
-              borderRadius: 2,
-              backdropFilter: "blur(10px)",
-              height: 320,
+              p: 3,
+              bgcolor: "rgba(19, 23, 34, 0.8)",
+              border: "1px solid rgba(0, 212, 255, 0.2)",
+              borderRadius: "16px",
+              backdropFilter: "blur(20px)",
+              height: 400,
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <Typography
-              variant="subtitle2"
-              sx={{ mb: 2, fontWeight: 500, color: "#e2e8f0" }}
+              variant="h6"
+              sx={{ 
+                mb: 3, 
+                fontWeight: 700, 
+                color: "#f8fafc",
+                fontSize: "1.1rem",
+              }}
             >
               Distribuição de Tráfego
             </Typography>
-            <ResponsiveContainer width="100%" height={240}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={65}
-                  outerRadius={90}
-                  paddingAngle={3}
-                  dataKey="value"
-                  startAngle={90}
-                  endAngle={-270}
-                  animationDuration={1000}
-                  animationBegin={600}
-                  animationEasing="ease-out"
-                >
-                  <Cell fill={COLORS.ipv4} stroke="none" />
-                  <Cell fill={COLORS.ipv6} stroke="none" />
-                </Pie>
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      const data = payload[0].payload;
-                      return (
-                        <Paper
-                          sx={{
-                            p: 1.5,
-                            bgcolor: "#0C1017",
-                            border: "1px solid rgba(255, 255, 255, 0.1)",
-                          }}
-                        >
-                          <Typography
+            <Box sx={{ flex: 1, position: "relative" }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={70}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    dataKey="value"
+                    startAngle={90}
+                    endAngle={-270}
+                    animationDuration={1200}
+                    animationBegin={400}
+                    animationEasing="ease-out"
+                  >
+                    <Cell fill={COLORS.ipv4} stroke="none" />
+                    <Cell fill={COLORS.ipv6} stroke="none" />
+                  </Pie>
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <Paper
                             sx={{
-                              color: "#e2e8f0",
-                              fontSize: "0.75rem",
-                              fontWeight: 600,
+                              p: 2,
+                              bgcolor: "rgba(19, 23, 34, 0.95)",
+                              border: "1px solid rgba(0, 212, 255, 0.3)",
+                              borderRadius: "8px",
+                              backdropFilter: "blur(10px)",
                             }}
                           >
-                            Protocolo: {data.name}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              color:
-                                data.name === "IPv4"
-                                  ? COLORS.ipv4
-                                  : COLORS.ipv6,
-                              fontSize: "0.7rem",
-                            }}
-                          >
-                            Percentual: {data.value.toFixed(1)}%
-                          </Typography>
-                          <Typography
-                            sx={{
-                              color: "rgba(255, 255, 255, 0.6)",
-                              fontSize: "0.65rem",
-                            }}
-                          >
-                            Volume: {formatBytes(data.mb)}
-                          </Typography>
-                        </Paper>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+                            <Typography
+                              sx={{
+                                color: "#f8fafc",
+                                fontSize: "0.8rem",
+                                fontWeight: 600,
+                                mb: 1,
+                              }}
+                            >
+                              Protocolo: {data.name}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                color: data.name === "IPv4" ? COLORS.ipv4 : COLORS.ipv6,
+                                fontSize: "0.75rem",
+                                fontWeight: 600,
+                              }}
+                            >
+                              Percentual: {data.value.toFixed(1)}%
+                            </Typography>
+                            <Typography
+                              sx={{
+                                color: "rgba(248, 250, 252, 0.6)",
+                                fontSize: "0.7rem",
+                                fontWeight: 500,
+                              }}
+                            >
+                              Volume: {formatBytes(data.mb)}
+                            </Typography>
+                          </Paper>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
 
+        {/* Area Chart */}
         <Grid size={{ xs: 12, md: 8 }}>
           <Paper
             elevation={0}
             sx={{
-              p: 2.5,
-              bgcolor: "#0C1017",
-              border: "1px solid rgba(59, 130, 246, 0.2)",
-              borderRadius: 2,
-              backdropFilter: "blur(10px)",
-              height: 320,
+              p: 3,
+              bgcolor: "rgba(19, 23, 34, 0.8)",
+              border: "1px solid rgba(0, 212, 255, 0.2)",
+              borderRadius: "16px",
+              backdropFilter: "blur(20px)",
+              height: 400,
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <Stack
               direction="row"
               alignItems="center"
               justifyContent="space-between"
-              sx={{ mb: 2 }}
+              sx={{ mb: 3 }}
             >
               <Typography
-                variant="subtitle2"
-                sx={{ fontWeight: 500, color: "#e2e8f0" }}
+                variant="h6"
+                sx={{ 
+                  fontWeight: 700, 
+                  color: "#f8fafc",
+                  fontSize: "1.1rem",
+                }}
               >
                 {selectedDate
                   ? "Percentual de Flows por Hora"
-                  : "Percentual de Flows por Versão IP"}
+                  : "Evolução Percentual por Versão IP"}
               </Typography>
               {selectedDate && (
                 <IconButton
-                  size="small"
                   onClick={handleBackToDaily}
-                  sx={{ color: "#3b82f6" }}
+                  sx={{ 
+                    color: "#00d4ff",
+                    backgroundColor: "rgba(0, 212, 255, 0.1)",
+                    border: "1px solid rgba(0, 212, 255, 0.2)",
+                    borderRadius: "10px",
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 212, 255, 0.2)",
+                      transform: "translateY(-1px)",
+                    },
+                    transition: "all 0.3s ease",
+                  }}
                 >
                   <ArrowBackIcon fontSize="small" />
                 </IconButton>
@@ -588,7 +718,7 @@ export default function IPVersionDashboard() {
             {isLoadingHourly && selectedDate ? (
               <Box
                 sx={{
-                  height: 240,
+                  flex: 1,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -598,8 +728,8 @@ export default function IPVersionDashboard() {
                   sx={{
                     width: 48,
                     height: 48,
-                    border: "3px solid rgba(59, 130, 246, 0.2)",
-                    borderTop: "3px solid #3b82f6",
+                    border: "3px solid rgba(0, 212, 255, 0.2)",
+                    borderTop: "3px solid #00d4ff",
                     borderRadius: "50%",
                     animation: "spin 1s linear infinite",
                     "@keyframes spin": {
@@ -610,197 +740,161 @@ export default function IPVersionDashboard() {
                 />
               </Box>
             ) : hasMultipleDataPoints || selectedDate ? (
-              <ResponsiveContainer width="100%" height={240}>
-                <AreaChart
-                  data={chartData}
-                  margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
-                  onClick={!selectedDate ? handlePointClick : undefined}
-                >
-                  <defs>
-                    <linearGradient id="colorIPv4" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="0%"
-                        stopColor={COLORS.ipv4}
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor={COLORS.ipv4}
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                    <linearGradient id="colorIPv6" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="0%"
-                        stopColor={COLORS.ipv6}
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor={COLORS.ipv6}
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="rgba(255, 255, 255, 0.03)"
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey={dataKey}
-                    tickFormatter={tickFormatter}
-                    tick={{ fill: "rgba(255, 255, 255, 0.5)", fontSize: 10 }}
-                    axisLine={{ stroke: "rgba(255, 255, 255, 0.05)" }}
-                  />
-                  <YAxis
-                    domain={[0, 100]}
-                    tick={{ fill: "rgba(255, 255, 255, 0.5)", fontSize: 10 }}
-                    axisLine={{ stroke: "rgba(255, 255, 255, 0.05)" }}
-                    label={{
-                      value: "%",
-                      angle: -90,
-                      position: "insideLeft",
-                      style: { fill: "rgba(255, 255, 255, 0.5)", fontSize: 10 },
+              <Box sx={{ flex: 1 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={chartData}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
+                    onClick={!selectedDate ? handlePointClick : undefined}
+                  >
+                    <defs>
+                      <linearGradient id="colorIPv4" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={COLORS.ipv4} stopOpacity={0.4} />
+                        <stop offset="100%" stopColor={COLORS.ipv4} stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="colorIPv6" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={COLORS.ipv6} stopOpacity={0.4} />
+                        <stop offset="100%" stopColor={COLORS.ipv6} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="rgba(255, 255, 255, 0.05)"
+                      vertical={false}
+                    />
+                    <XAxis
+                      dataKey={dataKey}
+                      tickFormatter={tickFormatter}
+                      tick={{ fill: "rgba(248, 250, 252, 0.6)", fontSize: 11 }}
+                      axisLine={{ stroke: "rgba(248, 250, 252, 0.1)" }}
+                    />
+                    <YAxis
+                      domain={[0, 100]}
+                      tick={{ fill: "rgba(248, 250, 252, 0.6)", fontSize: 11 }}
+                      axisLine={{ stroke: "rgba(248, 250, 252, 0.1)" }}
+                    />
+                    <Tooltip content={<FlowPercentTooltip />} />
+                    <Area
+                      type="monotone"
+                      dataKey="ipv4Percentage"
+                      stroke={COLORS.ipv4}
+                      strokeWidth={3}
+                      fill="url(#colorIPv4)"
+                      animationDuration={1200}
+                      animationBegin={400}
+                      cursor={!selectedDate ? "pointer" : "default"}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="ipv6Percentage"
+                      stroke={COLORS.ipv6}
+                      strokeWidth={3}
+                      fill="url(#colorIPv6)"
+                      animationDuration={1200}
+                      animationBegin={600}
+                      cursor={!selectedDate ? "pointer" : "default"}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+                {!selectedDate && hasMultipleDataPoints && (
+                  <Typography
+                    sx={{
+                      color: "rgba(248, 250, 252, 0.5)",
+                      fontSize: "0.75rem",
+                      textAlign: "center",
+                      mt: 1,
+                      fontWeight: 500,
                     }}
-                  />
-                  <Tooltip content={<FlowPercentTooltip />} />
-                  <Area
-                    type="monotone"
-                    dataKey="ipv4Percentage"
-                    stroke={COLORS.ipv4}
-                    strokeWidth={2}
-                    fill="url(#colorIPv4)"
-                    animationDuration={1000}
-                    animationBegin={400}
-                    cursor={!selectedDate ? "pointer" : "default"}
-                    onClick={
-                      !selectedDate
-                        ? (data: any) => {
-                            if (data && data.date) {
-                              setSelectedDate(data.date);
-                            }
-                          }
-                        : undefined
-                    }
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="ipv6Percentage"
-                    stroke={COLORS.ipv6}
-                    strokeWidth={2}
-                    fill="url(#colorIPv6)"
-                    animationDuration={1000}
-                    animationBegin={600}
-                    cursor={!selectedDate ? "pointer" : "default"}
-                    onClick={
-                      !selectedDate
-                        ? (data: any) => {
-                            if (data && data.date) {
-                              setSelectedDate(data.date);
-                            }
-                          }
-                        : undefined
-                    }
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+                  >
+                    Clique em um ponto para ver detalhes horários
+                  </Typography>
+                )}
+              </Box>
             ) : (
               <Box
                 sx={{
-                  height: 240,
+                  flex: 1,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <Typography sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
-                  Sem dados disponíveis
+                <Typography sx={{ color: "rgba(248, 250, 252, 0.5)", fontWeight: 500 }}>
+                  Sem dados disponíveis para o período selecionado
                 </Typography>
               </Box>
-            )}
-
-            {!selectedDate && hasMultipleDataPoints && (
-              <>
-                <Typography
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.4)",
-                    fontSize: "0.7rem",
-                    textAlign: "center",
-                    mt: 1,
-                  }}
-                >
-                  Clique em um ponto para ver detalhes por hora
-                </Typography>
-              </>
             )}
           </Paper>
         </Grid>
 
+        {/* Bar Chart */}
         <Grid size={{ xs: 12 }}>
           <Paper
             elevation={0}
             sx={{
-              p: 2.5,
-              bgcolor: "#0C1017",
+              p: 3,
+              bgcolor: "rgba(19, 23, 34, 0.8)",
               border: "1px solid rgba(16, 185, 129, 0.2)",
-              borderRadius: 2,
-              backdropFilter: "blur(10px)",
-              height: 320,
+              borderRadius: "16px",
+              backdropFilter: "blur(20px)",
+              height: 400,
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <Typography
-              variant="subtitle2"
-              sx={{ mb: 2, fontWeight: 500, color: "#e2e8f0" }}
+              variant="h6"
+              sx={{ 
+                mb: 3, 
+                fontWeight: 700, 
+                color: "#f8fafc",
+                fontSize: "1.1rem",
+              }}
             >
-              Volume de Dados por Versão IP (MB)
+              Volume de Dados por Versão IP
             </Typography>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart
-                data={bytesData}
-                margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="rgba(255, 255, 255, 0.03)"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={formatDate}
-                  tick={{ fill: "rgba(255, 255, 255, 0.5)", fontSize: 10 }}
-                  axisLine={{ stroke: "rgba(255, 255, 255, 0.05)" }}
-                />
-                <YAxis
-                  tick={{ fill: "rgba(255, 255, 255, 0.5)", fontSize: 10 }}
-                  axisLine={{ stroke: "rgba(255, 255, 255, 0.05)" }}
-                  label={{
-                    value: "MB",
-                    angle: -90,
-                    position: "insideLeft",
-                    style: { fill: "rgba(255, 255, 255, 0.5)", fontSize: 10 },
-                  }}
-                />
-                <Tooltip
-                  content={<BytesTooltip />}
-                  cursor={{ fill: "rgba(255, 255, 255, 0.05)" }}
-                />
-                <Bar
-                  dataKey="ipv4MB"
-                  fill={COLORS.ipv4}
-                  radius={[4, 4, 0, 0]}
-                  animationDuration={1000}
-                  animationBegin={400}
-                />
-                <Bar
-                  dataKey="ipv6MB"
-                  fill={COLORS.ipv6}
-                  radius={[4, 4, 0, 0]}
-                  animationDuration={1000}
-                  animationBegin={600}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            <Box sx={{ flex: 1 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={bytesData}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="rgba(255, 255, 255, 0.05)"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={formatDate}
+                    tick={{ fill: "rgba(248, 250, 252, 0.6)", fontSize: 11 }}
+                    axisLine={{ stroke: "rgba(248, 250, 252, 0.1)" }}
+                  />
+                  <YAxis
+                    tick={{ fill: "rgba(248, 250, 252, 0.6)", fontSize: 11 }}
+                    axisLine={{ stroke: "rgba(248, 250, 252, 0.1)" }}
+                  />
+                  <Tooltip
+                    content={<BytesTooltip />}
+                    cursor={{ fill: "rgba(255, 255, 255, 0.05)" }}
+                  />
+                  <Bar
+                    dataKey="ipv4MB"
+                    fill={COLORS.ipv4}
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={1200}
+                    animationBegin={400}
+                  />
+                  <Bar
+                    dataKey="ipv6MB"
+                    fill={COLORS.ipv6}
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={1200}
+                    animationBegin={600}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
       </Grid>

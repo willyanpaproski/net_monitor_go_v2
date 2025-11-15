@@ -1,13 +1,11 @@
 import { useSnmpMonitor } from "../../hooks/useSnmpMonitor";
 import { useEffect, useMemo } from "react";
-import { Box, Tabs, Tab } from "@mui/material";
+import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { Dashboard, SettingsEthernet, HubOutlined } from "@mui/icons-material";
 import { useParams, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRouter } from "../../api/Routers";
-import { useI18n } from "../../hooks/usei18n";
 
 export default function RouterSnmpMonitor() {
-    const { t } = useI18n();
     const { routerId } = useParams<{ routerId: string }>();
     const router = useRouter(routerId!);
     const location = useLocation();
@@ -224,65 +222,141 @@ export default function RouterSnmpMonitor() {
     };
 
     if (router.isLoading) {
-        return <div>{t("loading")}...</div>;
+        return (
+            <Box sx={{ 
+                bgcolor: '#0f172a', 
+                minHeight: '100vh', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center' 
+            }}>
+                <Box
+                    sx={{
+                        width: 48,
+                        height: 48,
+                        border: "3px solid rgba(0, 212, 255, 0.2)",
+                        borderTop: "3px solid #00d4ff",
+                        borderRadius: "50%",
+                        animation: "spin 1s linear infinite",
+                        "@keyframes spin": {
+                            "0%": { transform: "rotate(0deg)" },
+                            "100%": { transform: "rotate(360deg)" },
+                        },
+                    }}
+                />
+            </Box>
+        );
     }
 
     if (router.isError) {
-        return <div>Erro ao carregar roteador</div>;
+        return (
+            <Box sx={{ 
+                bgcolor: '#0f172a', 
+                minHeight: '100vh', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center' 
+            }}>
+                <Typography sx={{ color: '#ef4444', fontSize: '1.1rem' }}>
+                    Erro ao carregar roteador
+                </Typography>
+            </Box>
+        );
     }
 
     return (
         <Box sx={{ 
-            bgcolor: '#050810', 
+            background: 'linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%)',
             minHeight: '100vh', 
             width: '100%',
             py: 3, 
             px: { xs: 2, sm: 3 },
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            position: 'relative',
+            '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: `
+                    radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.05) 0%, transparent 50%)
+                `,
+                pointerEvents: 'none',
+            }
         }}>
-            <Box sx={{ mb: 4, borderBottom: 1, borderColor: 'rgba(148, 163, 184, 0.1)', overflowX: 'hidden' }}>
-                <Tabs 
-                    value={location.pathname}
-                    onChange={handleTabChange}
-                    sx={{
-                        '& .MuiTab-root': {
-                            color: '#64748b',
-                            textTransform: 'none',
-                            fontSize: '1rem',
-                            fontWeight: 500,
-                            minHeight: 56,
-                            '&.Mui-selected': {
-                                color: '#8b5cf6',
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Box sx={{ 
+                    mb: 4, 
+                    borderBottom: 1, 
+                    borderColor: 'rgba(0, 212, 255, 0.1)', 
+                    overflowX: 'auto',
+                    '&::-webkit-scrollbar': {
+                        height: '6px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        background: 'rgba(0, 212, 255, 0.3)',
+                        borderRadius: '3px',
+                    },
+                }}>
+                    <Tabs 
+                        value={location.pathname}
+                        onChange={handleTabChange}
+                        sx={{
+                            minHeight: 60,
+                            '& .MuiTab-root': {
+                                color: 'rgba(248, 250, 252, 0.6)',
+                                textTransform: 'none',
+                                fontSize: '0.95rem',
+                                fontWeight: 500,
+                                minHeight: 56,
+                                padding: '12px 20px',
+                                borderRadius: '12px 12px 0 0',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    color: '#00d4ff',
+                                    backgroundColor: 'rgba(0, 212, 255, 0.05)',
+                                },
+                                '&.Mui-selected': {
+                                    color: '#00d4ff',
+                                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                                },
                             },
-                        },
-                        '& .MuiTabs-indicator': {
-                            backgroundColor: '#8b5cf6',
-                            height: 3,
-                        },
-                    }}
-                >
-                    <Tab 
-                        icon={<Dashboard />} 
-                        iconPosition="start" 
-                        label="Dashboard"
-                        value={`/router/${routerId}`}
-                    />
-                    <Tab 
-                        icon={<SettingsEthernet />} 
-                        iconPosition="start" 
-                        label="Interfaces Físicas"
-                        value={`/router/${routerId}/interfaces`}
-                    />
-                    <Tab 
-                        icon={<HubOutlined />}
-                        iconPosition="start"
-                        label="Vlans"
-                        value={`/router/${routerId}/vlans`}
-                    />
-                </Tabs>
-            </Box>
+                            '& .MuiTabs-indicator': {
+                                backgroundColor: '#00d4ff',
+                                height: 3,
+                                borderRadius: '3px 3px 0 0',
+                            },
+                        }}
+                    >
+                        <Tab 
+                            icon={<Dashboard sx={{ fontSize: 20 }} />} 
+                            iconPosition="start" 
+                            label="Dashboard"
+                            value={`/router/${routerId}`}
+                        />
+                        <Tab 
+                            icon={<SettingsEthernet sx={{ fontSize: 20 }} />} 
+                            iconPosition="start" 
+                            label="Interfaces Físicas"
+                            value={`/router/${routerId}/interfaces`}
+                        />
+                        <Tab 
+                            icon={<HubOutlined sx={{ fontSize: 20 }} />}
+                            iconPosition="start"
+                            label="VLANs"
+                            value={`/router/${routerId}/vlans`}
+                        />
+                    </Tabs>
+                </Box>
 
-            <Outlet context={outletContext} />
+                <Outlet context={outletContext} />
+            </Box>
         </Box>
     );
 }

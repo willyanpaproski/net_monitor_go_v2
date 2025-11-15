@@ -121,7 +121,10 @@ export default function RouterDashboard() {
                         />
                     </Box>
                     <Box sx={{ flex: { xs: 1, lg: 1.5 }, minWidth: 0 }}>
-                        <TemperatureLineChart currentTemperature={currentTemperature} temperatureChartData={temperatureChartData} />
+                        <TemperatureLineChart 
+                            currentTemperature={currentTemperature} 
+                            temperatureChartData={temperatureChartData} 
+                        />
                     </Box>
                 </Stack>
 

@@ -14,7 +14,7 @@ export default function MemoryUsagePieChart({
 }: MemoryUsageDonutChartProps) {
   const { t } = useI18n();
   const [show, setShow] = useState(false);
-  const [_animateText, setAnimateText] = useState(false);
+  const [animateText, setAnimateText] = useState(false);
   const usedPercentage =
     totalMemory > 0 ? (currentMemory / totalMemory) * 100 : 0;
   const freeMemory = totalMemory - currentMemory;
@@ -25,11 +25,11 @@ export default function MemoryUsagePieChart({
   }, []);
 
   const data = [
-    { name: "used", value: currentMemory, color: "#8b5cf6" },
+    { name: "used", value: currentMemory, color: "#00d4ff" },
     {
       name: "free",
       value: freeMemory > 0 ? freeMemory : 0,
-      color: "rgba(255, 255, 255, 0.03)",
+      color: "rgba(255, 255, 255, 0.05)",
     },
   ];
 
@@ -38,19 +38,30 @@ export default function MemoryUsagePieChart({
       elevation={0}
       sx={{
         p: 3,
-        bgcolor: "#0C1017",
-        border: "1px solid rgba(139, 92, 246, 0.2)",
-        borderRadius: 2,
-        backdropFilter: "blur(10px)",
-        height: 330,
+        bgcolor: "rgba(19, 23, 34, 0.8)",
+        border: "1px solid rgba(0, 212, 255, 0.2)",
+        borderRadius: "16px",
+        backdropFilter: "blur(20px)",
+        height: 340,
         display: "flex",
         flexDirection: "column",
         position: "relative",
         overflow: "hidden",
         opacity: show ? 1 : 0,
+        transition: "all 0.5s ease",
+        backgroundImage: "linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, transparent 100%)",
+        "&:hover": {
+          border: "1px solid rgba(0, 212, 255, 0.4)",
+          boxShadow: "0 8px 32px rgba(0, 212, 255, 0.1)",
+        },
       }}
     >
-      <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
+      <Typography variant="h6" sx={{ 
+        mb: 3, 
+        fontWeight: 700, 
+        color: "#f8fafc",
+        fontSize: "1.1rem",
+      }}>
         {t("routers.snmpMonitor.dashboard.memoryUsagePieChart.title")}
       </Typography>
 
@@ -70,18 +81,23 @@ export default function MemoryUsagePieChart({
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius={65}
-              outerRadius={90}
-              paddingAngle={3}
+              innerRadius={70}
+              outerRadius={95}
+              paddingAngle={2}
               dataKey="value"
               startAngle={90}
               endAngle={-270}
-              animationDuration={1000}
+              animationDuration={1200}
               animationBegin={600}
               animationEasing="ease-out"
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.color} 
+                  stroke="none"
+                  strokeWidth={0}
+                />
               ))}
             </Pie>
           </PieChart>
@@ -95,15 +111,21 @@ export default function MemoryUsagePieChart({
             transform: "translate(-50%, -50%)",
             textAlign: "center",
             pointerEvents: "none",
+            opacity: animateText ? 1 : 0,
+            transition: "opacity 0.5s ease",
           }}
         >
           <Typography
             variant="h3"
             sx={{
-              color: "#8b5cf6",
+              color: "#00d4ff",
               fontWeight: 800,
-              fontSize: "1.8rem",
+              fontSize: "2rem",
               lineHeight: 1,
+              background: "linear-gradient(135deg, #00d4ff 0%, #0099cc 100%)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
             }}
           >
             {usedPercentage.toFixed(1)}%
@@ -111,7 +133,7 @@ export default function MemoryUsagePieChart({
           <Typography
             variant="body2"
             sx={{
-              color: "rgba(255, 255, 255, 0.5)",
+              color: "rgba(248, 250, 252, 0.6)",
               mt: 0.5,
               fontSize: "0.875rem",
               fontWeight: 500,
@@ -128,23 +150,28 @@ export default function MemoryUsagePieChart({
           display: "flex",
           justifyContent: "space-between",
           pt: 2,
-          borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+          borderTop: "1px solid rgba(255, 255, 255, 0.1)",
         }}
       >
         <Box>
           <Typography
             variant="body2"
             sx={{
-              color: "rgba(255, 255, 255, 0.5)",
-              fontSize: "0.7rem",
+              color: "rgba(248, 250, 252, 0.6)",
+              fontSize: "0.75rem",
               mb: 0.5,
+              fontWeight: 500,
             }}
           >
             {t("routers.snmpMonitor.dashboard.memoryUsagePieChart.used")}
           </Typography>
           <Typography
             variant="body1"
-            sx={{ color: "#8b5cf6", fontWeight: 700, fontSize: "0.95rem" }}
+            sx={{ 
+              color: "#00d4ff", 
+              fontWeight: 700, 
+              fontSize: "0.95rem",
+            }}
           >
             {currentMemory.toFixed(1)} MB
           </Typography>
@@ -153,9 +180,10 @@ export default function MemoryUsagePieChart({
           <Typography
             variant="body2"
             sx={{
-              color: "rgba(255, 255, 255, 0.5)",
-              fontSize: "0.7rem",
+              color: "rgba(248, 250, 252, 0.6)",
+              fontSize: "0.75rem",
               mb: 0.5,
+              fontWeight: 500,
             }}
           >
             {t("routers.snmpMonitor.dashboard.memoryUsagePieChart.free")}
@@ -163,7 +191,7 @@ export default function MemoryUsagePieChart({
           <Typography
             variant="body1"
             sx={{
-              color: "rgba(255, 255, 255, 0.7)",
+              color: "rgba(248, 250, 252, 0.8)",
               fontWeight: 600,
               fontSize: "0.95rem",
             }}
@@ -175,9 +203,10 @@ export default function MemoryUsagePieChart({
           <Typography
             variant="body2"
             sx={{
-              color: "rgba(255, 255, 255, 0.5)",
-              fontSize: "0.7rem",
+              color: "rgba(248, 250, 252, 0.6)",
+              fontSize: "0.75rem",
               mb: 0.5,
+              fontWeight: 500,
             }}
           >
             Total
@@ -185,7 +214,7 @@ export default function MemoryUsagePieChart({
           <Typography
             variant="body1"
             sx={{
-              color: "rgba(255, 255, 255, 0.7)",
+              color: "rgba(248, 250, 252, 0.8)",
               fontWeight: 600,
               fontSize: "0.95rem",
             }}

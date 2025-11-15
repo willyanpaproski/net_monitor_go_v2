@@ -1,41 +1,200 @@
 .signInContainer {
-  height: calc((1 - var(--template-frame-height, 0)) * 100dvh);
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
-  padding: 16px;
-}
-
-@media (min-width: 600px) {
-  .signInContainer {
-    padding: 32px;
-  }
-}
-
-.signInContainer::before {
-  content: "";
-  display: block;
-  z-index: -1;
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 50%,
-    hsl(210, 100%, 97%),
-    hsl(0, 0%, 100%)
-  );
-  background-repeat: no-repeat;
 }
 
 .loginCard {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 32px;
-  gap: 16px;
-  box-shadow: hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px,
-              hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px;
+  max-width: min(440px, 90vw);
+  min-width: min(320px, 85vw);
+  padding: clamp(24px, 4vw, 40px) clamp(20px, 3vw, 32px);
+  gap: clamp(24px, 3vw, 32px);
+  background: rgba(19, 23, 34, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(0, 212, 255, 0.1);
+  margin: 20px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 900px) {
   .loginCard {
-    max-width: 450px;
+    margin-right: 10%;
   }
+}
+
+@media (max-width: 899px) {
+  .loginCard {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .loginCard {
+    max-width: 95vw;
+    min-width: 85vw;
+    padding: 20px 16px;
+    gap: 20px;
+  }
+}
+
+/* Para telas muito pequenas ou zoom alto */
+@media (max-width: 360px) {
+  .loginCard {
+    max-width: 98vw;
+    min-width: 92vw;
+    padding: 16px 12px;
+    gap: 16px;
+    border-radius: 16px;
+  }
+}
+
+.logoContainer {
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.title {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700 !important;
+  margin-top: 16px !important;
+  margin-bottom: 8px !important;
+  font-size: clamp(1.5rem, 4vw, 2rem) !important;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 400 !important;
+  font-size: clamp(0.8rem, 2vw, 0.9rem) !important;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: clamp(16px, 2.5vw, 24px);
+}
+
+.formLabel {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+  font-size: clamp(0.8rem, 2vw, 0.9rem) !important;
+}
+
+.textField {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.textField :global(.MuiOutlinedInput-root) {
+  color: white;
+  border-radius: 12px;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+}
+
+.textField :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+}
+
+.textField :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+  border-color: rgba(0, 212, 255, 0.5);
+}
+
+.textField :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+  border-color: #00d4ff;
+  border-width: 2px;
+}
+
+.textField :global(.MuiInputBase-input) {
+  color: white;
+  padding: clamp(10px, 2vw, 12px) clamp(12px, 2vw, 14px);
+  font-size: inherit;
+}
+
+.textField :global(.MuiInputBase-input::placeholder) {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+}
+
+.textField :global(.MuiFormHelperText-root) {
+  margin-left: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(0.7rem, 1.5vw, 0.75rem);
+}
+
+.textField :global(.MuiFormHelperText-root.Mui-error) {
+  color: #f44336;
+}
+
+.inputIcon {
+  color: rgba(0, 212, 255, 0.7) !important;
+  font-size: clamp(1rem, 2.5vw, 1.25rem) !important;
+}
+
+.visibilityButton {
+  color: rgba(255, 255, 255, 0.7) !important;
+  padding: 8px !important;
+}
+
+.visibilityButton:hover {
+  color: #00d4ff !important;
+  background: rgba(0, 212, 255, 0.1) !important;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%) !important;
+  color: white !important;
+  padding: clamp(12px, 2vw, 14px) !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: clamp(0.9rem, 2vw, 1rem) !important;
+  text-transform: none !important;
+  margin-top: 8px !important;
+  box-shadow: 
+    0 8px 25px -8px rgba(0, 212, 255, 0.5),
+    0 4px 15px -4px rgba(0, 212, 255, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 35px -8px rgba(0, 212, 255, 0.7),
+    0 6px 20px -4px rgba(0, 212, 255, 0.4) !important;
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.submitButton:disabled {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.loadingSpinner {
+  color: white !important;
+}
+
+.footerText {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5) !important;
+  margin-top: 16px !important;
+  font-size: clamp(0.65rem, 1.5vw, 0.75rem) !important;
 }

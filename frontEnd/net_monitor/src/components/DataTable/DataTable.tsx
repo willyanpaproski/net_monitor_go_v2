@@ -349,7 +349,22 @@ export default function GenericDataTable<T extends DataTableItem>({
         <Stack direction="row" alignItems="center" spacing={1}>
           <Tooltip title="Recarregar dados" placement="right" enterDelay={1000}>
             <div>
-              <IconButton size="small" aria-label="refresh" onClick={handleRefresh}>
+              <IconButton 
+                size="small" 
+                aria-label="refresh" 
+                onClick={handleRefresh}
+                sx={{
+                  color: 'rgba(248, 250, 252, 0.7)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    color: '#ffffff',
+                    transform: 'translateY(-1px)',
+                  },
+                  transition: 'all 0.3s ease',
+                }}
+              >
                 <RefreshIcon />
               </IconButton>
             </div>
@@ -359,6 +374,23 @@ export default function GenericDataTable<T extends DataTableItem>({
               variant="contained"
               onClick={handleCreateClick}
               startIcon={<AddIcon />}
+              sx={{
+                background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+                color: 'white',
+                fontWeight: 600,
+                borderRadius: '8px',
+                px: 3,
+                py: 1,
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                  background: 'linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                },
+              }}
             >
               {t('dataTable.create')}
             </Button>
@@ -366,69 +398,283 @@ export default function GenericDataTable<T extends DataTableItem>({
         </Stack>
       }
     >
-      <Box sx={{ flex: 1, width: '100%' }}>
+      <Box sx={{ 
+        flex: 1, 
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         {error ? (
           <Box sx={{ flexGrow: 1 }}>
-            <Alert severity="error">{error.message}</Alert>
+            <Alert 
+              severity="error"
+              sx={{
+                borderRadius: '8px',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                color: '#f8fafc',
+                '& .MuiAlert-icon': {
+                  color: '#ef4444',
+                },
+              }}
+            >
+              {error.message}
+            </Alert>
           </Box>
         ) : (
-          <DataGrid
-            rows={rowsState.rows}
-            rowCount={rowsState.rowCount}
-            columns={columns}
-            pagination
-            sortingMode="server"
-            filterMode="server"
-            paginationMode="server"
-            paginationModel={paginationModel}
-            onPaginationModelChange={handlePaginationModelChange}
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            filterModel={filterModel}
-            onFilterModelChange={handleFilterModelChange}
-            disableRowSelectionOnClick
-            onRowClick={handleRowClick}
-            loading={isLoading}
-            initialState={initialState}
-            pageSizeOptions={pageSizeOptions}
-            localeText={{
-              columnMenuUnsort: t("dataTable.unsort"),
-              columnMenuFilter: t("dataTable.filter"),
-              columnMenuHideColumn: t("dataTable.hideColumn"),
-              columnMenuManageColumns: t("dataTable.manageColumns"),
-              columnMenuSortDesc: t("dataTable.sortDesc"),
-              columnMenuSortAsc: t("dataTable.sortAsc"),
-              paginationRowsPerPage: t("dataTable.rowsPerPage"),
-              toolbarExportCSV: t("dataTable.exportCsv")
-            }}
-            sx={{
-              [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {
-                outline: 'transparent',
-              },
-              [`& .${gridClasses.columnHeader}:focus-within, & .${gridClasses.cell}:focus-within`]:
-                {
-                  outline: 'none',
+          <Box sx={{ 
+            flex: 1,
+            width: '100%',
+            height: '100%',
+            minHeight: 400
+          }}>
+            <DataGrid
+              rows={rowsState.rows}
+              rowCount={rowsState.rowCount}
+              columns={columns}
+              pagination
+              sortingMode="server"
+              filterMode="server"
+              paginationMode="server"
+              paginationModel={paginationModel}
+              onPaginationModelChange={handlePaginationModelChange}
+              sortModel={sortModel}
+              onSortModelChange={handleSortModelChange}
+              filterModel={filterModel}
+              onFilterModelChange={handleFilterModelChange}
+              disableRowSelectionOnClick
+              onRowClick={handleRowClick}
+              loading={isLoading}
+              initialState={initialState}
+              pageSizeOptions={pageSizeOptions}
+              localeText={{
+                columnMenuUnsort: t("dataTable.unsort"),
+                columnMenuFilter: t("dataTable.filter"),
+                columnMenuHideColumn: t("dataTable.hideColumn"),
+                columnMenuManageColumns: t("dataTable.manageColumns"),
+                columnMenuSortDesc: t("dataTable.sortDesc"),
+                columnMenuSortAsc: t("dataTable.sortAsc"),
+                paginationRowsPerPage: t("dataTable.rowsPerPage"),
+                toolbarExportCSV: t("dataTable.exportCsv"),
+                noRowsLabel: t("dataTable.noRows"),
+                noResultsOverlayLabel: t("dataTable.noResults"),
+                footerRowSelected: (count) => 
+                  count !== 1 
+                    ? `${count} linhas selecionadas`
+                    : `${count} linha selecionada`,
+                footerTotalRows: 'Total de linhas:',
+                footerTotalVisibleRows: (visibleCount, totalCount) =>
+                  `${visibleCount.toLocaleString()} de ${totalCount.toLocaleString()}`,
+              }}
+              sx={{
+                flex: 1,
+                width: '100%',
+                height: '100%',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'rgba(10, 10, 10, 0.9)',
+                
+                // Header styles
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: 'rgba(20, 20, 20, 0.9)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px 8px 0 0',
                 },
-              [`& .${gridClasses.row}:hover`]: {
-                cursor: enableRowClick ? 'pointer' : 'default',
-              },
-              '& .actions': {
-                color: 'text.secondary',
-              },
-              '& .actions:hover': {
-                color: 'text.primary',
-              },
-            }}
-            slotProps={{
-              loadingOverlay: {
-                variant: 'circular-progress',
-                noRowsVariant: 'circular-progress',
-              },
-              baseIconButton: {
-                size: 'small',
-              },
-            }}
-          />
+                '& .MuiDataGrid-columnHeader': {
+                  backgroundColor: 'transparent',
+                  color: '#f8fafc',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  '&:focus-within': {
+                    outline: 'none',
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  },
+                },
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  fontWeight: 600,
+                },
+                
+                // Cell styles
+                '& .MuiDataGrid-cell': {
+                  color: 'rgba(248, 250, 252, 0.9)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                  '&:focus-within': {
+                    outline: 'none',
+                  },
+                },
+                
+                // Row styles
+                '& .MuiDataGrid-row': {
+                  backgroundColor: 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                    cursor: enableRowClick ? 'pointer' : 'default',
+                  },
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                    },
+                  },
+                },
+                
+                // Footer styles
+                '& .MuiDataGrid-footerContainer': {
+                  backgroundColor: 'rgba(20, 20, 20, 0.9)',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '0 0 8px 8px',
+                  color: 'rgba(248, 250, 252, 0.7)',
+                },
+                '& .MuiTablePagination-root': {
+                  color: 'rgba(248, 250, 252, 0.7)',
+                },
+                '& .MuiTablePagination-selectIcon': {
+                  color: 'rgba(248, 250, 252, 0.7)',
+                },
+                
+                // Toolbar styles
+                '& .MuiDataGrid-toolbarContainer': {
+                  padding: '12px 16px',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  backgroundColor: 'rgba(15, 15, 15, 0.9)',
+                },
+                
+                // Actions column
+                '& .actions': {
+                  color: 'rgba(248, 250, 252, 0.6)',
+                  display: 'flex',
+                  gap: '4px',
+                },
+                '& .actions .MuiIconButton-root': {
+                  color: 'inherit',
+                  padding: '6px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '6px',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    color: '#ffffff',
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    transform: 'translateY(-1px)',
+                  },
+                },
+                
+                // Loading overlay
+                '& .MuiDataGrid-overlay': {
+                  backgroundColor: 'rgba(10, 10, 10, 0.9)',
+                  color: 'rgba(248, 250, 252, 0.7)',
+                },
+                
+                // Scrollbar styles
+                '& ::-webkit-scrollbar': {
+                  width: '8px',
+                  height: '8px',
+                },
+                '& ::-webkit-scrollbar-track': {
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '4px',
+                },
+                '& ::-webkit-scrollbar-thumb': {
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '4px',
+                },
+                '& ::-webkit-scrollbar-thumb:hover': {
+                  background: 'rgba(255, 255, 255, 0.3)',
+                },
+
+                // Popper styles (menu, filter, etc.)
+                '& .MuiDataGrid-menu .MuiPaper-root': {
+                  backgroundColor: 'rgba(20, 20, 20, 0.95)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  color: 'rgba(248, 250, 252, 0.9)',
+                  '& .MuiMenuItem-root': {
+                    color: 'rgba(248, 250, 252, 0.8)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    },
+                  },
+                  '& .MuiList-root': {
+                    padding: '8px',
+                  },
+                },
+
+                // Filter panel styles
+                '& .MuiDataGrid-panel': {
+                  '& .MuiPaper-root': {
+                    backgroundColor: 'rgba(20, 20, 20, 0.95)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    color: 'rgba(248, 250, 252, 0.9)',
+                  },
+                  '& .MuiFormControl-root': {
+                    '& .MuiInputBase-root': {
+                      color: 'rgba(248, 250, 252, 0.9)',
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(255, 255, 255, 0.5)',
+                      },
+                      '& input::placeholder': {
+                        color: 'rgba(248, 250, 252, 0.5)',
+                      },
+                    },
+                  },
+                },
+
+                // Select component styles
+                '& .MuiSelect-root': {
+                  color: 'rgba(248, 250, 252, 0.7)',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                  },
+                },
+
+                // Input component styles
+                '& .MuiInputBase-input': {
+                  color: 'rgba(248, 250, 252, 0.7)',
+                  '&::placeholder': {
+                    color: 'rgba(248, 250, 252, 0.5)',
+                    opacity: 1,
+                  },
+                },
+
+                // Checkbox styles
+                '& .MuiCheckbox-root': {
+                  color: 'rgba(255, 255, 255, 0.3)',
+                  '&.Mui-checked': {
+                    color: 'rgba(255, 255, 255, 0.8)',
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  },
+                },
+              }}
+              slotProps={{
+                loadingOverlay: {
+                  variant: 'circular-progress',
+                  noRowsVariant: 'circular-progress',
+                },
+                baseIconButton: {
+                  size: 'small',
+                },
+              }}
+            />
+          </Box>
         )}
       </Box>
     </PageContainer>
