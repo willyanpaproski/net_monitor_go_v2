@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { useState, useEffect, useRef } from "react";
-import { useI18n } from "../../../hooks/usei18n";
+import { useI18n } from "../../hooks/usei18n";
 
 interface UptimeCardProps {
   uptime: string;

@@ -62,7 +62,43 @@ export default function TransmitterSnmpMonitor() {
         }));
     }, [monitor.routerData, transmitterId]);
 
+    const memoryChartData = useMemo(() => {
+        const data = monitor.getMetricData(transmitterId!, 'memory_usage_percent');
+        const uniqueData = data.reduce((acc, item) => {
+            const exists = acc.find(d => d.timestamp === item.timestamp);
+            if (!exists) {
+                acc.push(item);
+            }
+            return acc;
+        }, [] as typeof data);
+        
+        return uniqueData.map((item) => ({
+            time: new Date(item.timestamp).toLocaleTimeString(),
+            timestamp: item.timestamp,
+            value: item.value as number,
+        }));
+    }, [monitor.routerData, transmitterId]);
+
+    const temperatureChartData = useMemo(() => {
+        const data = monitor.getMetricData(transmitterId!, 'temperature');
+        const uniqueData = data.reduce((acc, item) => {
+            const exists = acc.find(d => d.timestamp === item.timestamp);
+            if (!exists) {
+                acc.push(item);
+            }
+            return acc;
+        }, [] as typeof data);
+        
+        return uniqueData.map((item) => ({
+            time: new Date(item.timestamp).toLocaleTimeString(),
+            timestamp: item.timestamp,
+            value: item.value as number,
+        }));
+    }, [monitor.routerData, transmitterId]);
+
     const currentCpu = cpuChartData[cpuChartData.length - 1]?.value as number || 0;
+    const currentMemory = memoryChartData[memoryChartData.length - 1]?.value as number || 0;
+    const currentTemperature = temperatureChartData[temperatureChartData.length -1]?.value as number || 0
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
         navigate(newValue);
@@ -72,6 +108,10 @@ export default function TransmitterSnmpMonitor() {
         uptime,
         currentCpu,
         cpuChartData,
+        currentMemory,
+        memoryChartData,
+        currentTemperature,
+        temperatureChartData,
         websocketRef: monitor.websocketRef,
         isConnected: monitor.isConnected
     }

@@ -37,6 +37,14 @@ func (t *TpLinkP7000Collector) Collect(device interfaces.NetworkDevice) (map[str
 		data["cpu_usage_percent"] = cpu
 	}
 
+	if memoryUsagePercent, err := tplinkp7000snmpcollectors.CollectTpLinkP7000MemoryUsagePercent(snmpParams, device); err == nil {
+		data["memory_usage_percent"] = memoryUsagePercent
+	}
+
+	if temperature, err := tplinkp7000snmpcollectors.CollectTpLinkP7000Temperature(snmpParams, device); err == nil {
+		data["temperature"] = temperature
+	}
+
 	return data, nil
 }
 
@@ -52,6 +60,10 @@ func (t *TpLinkP7000Collector) CollectMetric(device interfaces.NetworkDevice, me
 		return tplinkp7000snmpcollectors.CollectTpLinkP7000Uptime(snmpParams, device)
 	case "cpu_usage":
 		return tplinkp7000snmpcollectors.CollectTpLinkP7000CpuUtilizationPercent(snmpParams, device)
+	case "memory_usage_percent":
+		return tplinkp7000snmpcollectors.CollectTpLinkP7000MemoryUsagePercent(snmpParams, device)
+	case "temperature":
+		return tplinkp7000snmpcollectors.CollectTpLinkP7000Temperature(snmpParams, device)
 	default:
 		return nil, fmt.Errorf("Metric '%s' not supported by TpLinkP7000 collector", metricName)
 	}
@@ -61,19 +73,22 @@ func (t *TpLinkP7000Collector) GetSupportedMetrics() []string {
 	return []string{
 		"cpu_usage", "memory_usage", "disk_usage", "total_disk",
 		"interface_stats", "system_info", "physicalInterfaces",
-		"vlans",
+		"vlans", "memory_usage_percent", "temperature", "ponInterfaces",
 	}
 }
 
 func (t *TpLinkP7000Collector) GetMetricMapping() map[string]string {
 	return map[string]string{
-		"cpu_usage":          "cpu_usage_percent",
-		"memory_usage":       "used_memory_mb",
-		"total_memory":       "total_memory_mb",
-		"disk_usage":         "used_disk_mb",
-		"total_disk":         "total_disk",
-		"physicalInterfaces": "physicalInterfaces",
-		"vlans":              "vlans",
+		"cpu_usage":            "cpu_usage_percent",
+		"memory_usage":         "used_memory_mb",
+		"total_memory":         "total_memory_mb",
+		"disk_usage":           "used_disk_mb",
+		"total_disk":           "total_disk",
+		"physicalInterfaces":   "physicalInterfaces",
+		"vlans":                "vlans",
+		"memory_usage_percent": "memory_usage_percent",
+		"temperature":          "temperature",
+		"ponInterfaces":        "ponInterfaces",
 	}
 }
 

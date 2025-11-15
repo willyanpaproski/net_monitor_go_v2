@@ -1,10 +1,10 @@
 package mikrotikScheduler
 
 import (
+	interfaces "net_monitor/interfaces"
 	models "net_monitor/models"
 	repository "net_monitor/repository"
-	"net_monitor/utils"
-	interfaces "net_monitor/interfaces"
+	Utils "net_monitor/utils"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -52,7 +52,7 @@ func (s *AverageMemoryScheduler) calculateAllAverageMemoryUsage() {
 	if err != nil {
 		return
 	}
-	if routers == nil || len(routers) == 0 {
+	if len(routers) == 0 {
 		return
 	}
 	for _, router := range routers {

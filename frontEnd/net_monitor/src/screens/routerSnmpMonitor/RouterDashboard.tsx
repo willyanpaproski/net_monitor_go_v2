@@ -2,12 +2,13 @@ import { useOutletContext } from "react-router-dom";
 import StatCard from "../../components/StatCard";
 import { Stack, Box } from "@mui/material";
 import { useI18n } from "../../hooks/usei18n";
-import MemoryUsageLineChart from "./charts/MemoryUsageLineChart";
-import MemoryUsagePieChart from "./charts/MemoryUsagePieChart";
-import CpuUsageLineChart from "./charts/CpuUsageLineChart";
-import DiskUsageLineChart from "./charts/DiskUsageLineChart";
-import DiskUsagePieChart from "./charts/DiskUsagePieChart";
-import UptimeCard from "./charts/UptimeCard";
+import MemoryUsageMBLineChart from "../../components/Charts/MemoryUsageMBLineChart";
+import CpuUsageLineChart from "../../components/Charts/CpuUsageLineChart";
+import TemperatureLineChart from "../../components/Charts/TemperatureLineChart";
+import UptimeCard from "../../components/Charts/UptimeCard";
+import MemoryUsagePieChart from "../../components/Charts/MemoryUsagePieChart";
+import DiskUsageLineChart from "../../components/Charts/DiskUsageLineChart";
+import DiskUsagePieChart from "../../components/Charts/DiskUsagePieChart";
 
 type RouterDataContext = {
     uptime: string;
@@ -22,6 +23,8 @@ type RouterDataContext = {
     currentDisk: number;
     diskChartData: any[];
     totalDisk: number;
+    currentTemperature: number;
+    temperatureChartData: any[];
 };
 
 export default function RouterDashboard() {
@@ -38,7 +41,9 @@ export default function RouterDashboard() {
         cpuChartData,
         currentDisk,
         diskChartData,
-        totalDisk
+        totalDisk,
+        currentTemperature,
+        temperatureChartData,
     } = useOutletContext<RouterDataContext>();
 
     return (
@@ -92,7 +97,7 @@ export default function RouterDashboard() {
                     spacing={3}
                 >
                     <Box sx={{ flex: { xs: 1, lg: 2 }, minWidth: 0 }}>
-                        <MemoryUsageLineChart
+                        <MemoryUsageMBLineChart
                             currentMemory={currentMemory}
                             memoryChartData={memoryChartData}
                         />
@@ -105,10 +110,20 @@ export default function RouterDashboard() {
                     </Box>
                 </Stack>
 
-                <CpuUsageLineChart
-                    currentCpu={currentCpu}
-                    cpuChartData={cpuChartData}
-                />
+                <Stack
+                    direction={{ xs: 'column', lg: 'row' }}
+                    spacing={3}
+                >
+                    <Box sx={{ flex: { xs: 1, lg: 2 }, minWidth: 0 }}>
+                        <CpuUsageLineChart
+                            currentCpu={currentCpu}
+                            cpuChartData={cpuChartData}
+                        />
+                    </Box>
+                    <Box sx={{ flex: { xs: 1, lg: 1.5 }, minWidth: 0 }}>
+                        <TemperatureLineChart currentTemperature={currentTemperature} temperatureChartData={temperatureChartData} />
+                    </Box>
+                </Stack>
 
                 <Stack
                     direction={{ xs: 'column', lg: 'row' }}

@@ -27,6 +27,11 @@ type DiskRecord struct {
 	Value     float64            `json:"value" bson:"value"`
 }
 
+type TemperatureRecord struct {
+	Timestamp primitive.DateTime `json:"timestamp" bson:"timestamp"`
+	Value     float64            `json:"value" bson:"value"`
+}
+
 type Roteador struct {
 	ID                      primitive.ObjectID     `json:"id,omitempty" bson:"_id,omitempty"`
 	Active                  bool                   `json:"active" bson:"active"`

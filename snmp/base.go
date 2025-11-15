@@ -13,6 +13,14 @@ type SNMPCollector interface {
 	Collect(roteador models.Roteador) (map[string]interface{}, error)
 }
 
+type PonInterface struct {
+	Name           string  `json:"name"`
+	OnlineOnuCount int     `json:"onlineOnuCount"`
+	ConfigStatus   int     `json:"configStatus"`
+	OpticalBias    float64 `json:"opticalBias"`
+	OpticalVcc     float64 `json:"opticalVcc"`
+}
+
 type WalkResult struct {
 	OID   string
 	Value interface{}

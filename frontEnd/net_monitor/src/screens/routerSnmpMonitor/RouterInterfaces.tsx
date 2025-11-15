@@ -1,8 +1,8 @@
 import { useOutletContext } from "react-router-dom";
 import { Box } from "@mui/material";
-import PhysicalInterfacesDashboard from "./charts/PhysicalInterfaceList";
 import TrapEventsMonitor from "../../components/TrapEventsMonitor";
 import { useTrapMonitor } from "../../hooks/useTrapMonitor";
+import PhysicalInterfacesDashboard from "../../components/PhysicalInterfacesList";
 
 type RouterDataContext = {
     physicalInterfaces: any[];

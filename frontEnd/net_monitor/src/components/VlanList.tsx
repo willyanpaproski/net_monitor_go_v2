@@ -310,7 +310,7 @@ export default function VlanDashboard({ vlans = [] }: VlanDashboardProps) {
                                                 {vlan.name}
                                             </Typography>
                                             <Chip 
-                                                label={`VLAN ID: ${vlan.index}`}
+                                                label={`ID: ${vlan.index}`}
                                                 size="small"
                                                 sx={{
                                                     bgcolor: 'rgba(59, 130, 246, 0.2)',

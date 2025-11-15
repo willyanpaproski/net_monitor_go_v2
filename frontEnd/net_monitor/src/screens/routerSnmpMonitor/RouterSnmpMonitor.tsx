@@ -151,9 +151,27 @@ export default function RouterSnmpMonitor() {
         }));
     }, [monitor.routerData, routerId]);
 
+    const temperatureChartData = useMemo(() => {
+        const data = monitor.getMetricData(routerId!, 'temperature');
+        const uniqueData = data.reduce((acc, item) => {
+            const exists = acc.find(d => d.timestamp === item.timestamp);
+            if (!exists) {
+                acc.push(item);
+            }
+            return acc;
+        }, [] as typeof data);
+        
+        return uniqueData.map((item) => ({
+            time: new Date(item.timestamp).toLocaleTimeString(),
+            timestamp: item.timestamp,
+            value: item.value as number,
+        }));
+    }, [monitor.routerData, routerId]);
+
     const currentMemory = memoryChartData[memoryChartData.length - 1]?.value as number || 0;
     const currentCpu = cpuChartData[cpuChartData.length - 1]?.value as number || 0;
     const currentDisk = diskChartData[diskChartData.length - 1]?.value as number || 0;
+    const currentTemperature = temperatureChartData[diskChartData.length - 1]?.value as number || 0;
 
     const totalMemory = useMemo(() => {
         const [data] = monitor.getMetricData(routerId!, 'total_memory');
@@ -197,6 +215,8 @@ export default function RouterSnmpMonitor() {
         currentDisk,
         diskChartData,
         totalDisk,
+        currentTemperature,
+        temperatureChartData,
         physicalInterfaces,
         vlans,
         websocketRef: monitor.websocketRef,

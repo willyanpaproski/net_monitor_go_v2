@@ -26,12 +26,15 @@ func InitSchedules() *services.SchedulerManager {
 	mikrotikDiskScheduler := mikrotikScheduler.NewDiskScheduler(routerRepo, mikrotikCollector)
 	mikrotikAverageDiskCalculatorScheduler := mikrotikScheduler.NewAverageDiskCalculatorScheduler(routerRepo)
 
+	mikrotikTemperatureScheduler := mikrotikScheduler.NewTemperatureScheduler(routerRepo, mikrotikCollector)
+
 	schedulerManager.Register(mikrotikMemoryScheduler)
 	schedulerManager.Register(mikrotikAverageMemoryCalculatorScheduler)
 	schedulerManager.Register(mikrotikCpuScheduler)
 	schedulerManager.Register(mikrotikAverageCpuCalculatorScheduler)
 	schedulerManager.Register(mikrotikDiskScheduler)
 	schedulerManager.Register(mikrotikAverageDiskCalculatorScheduler)
+	schedulerManager.Register(mikrotikTemperatureScheduler)
 
 	return schedulerManager
 }

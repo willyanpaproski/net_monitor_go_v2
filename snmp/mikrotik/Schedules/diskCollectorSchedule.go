@@ -64,7 +64,7 @@ func (s *DiskScheduler) CollectAllDiskUsage() {
 	if err != nil {
 		return
 	}
-	if routers == nil || len(routers) == 0 {
+	if len(routers) == 0 {
 		return
 	}
 	for _, router := range routers {

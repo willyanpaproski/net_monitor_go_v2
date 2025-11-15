@@ -1,4 +1,3 @@
-// services/trap_service.go
 package services
 
 import (
@@ -147,6 +146,7 @@ func (ts *TrapService) parseTrap(packet *gosnmp.SnmpPacket, cachedDevice *Cached
 }
 
 func (ts *TrapService) extractTrapOID(packet *gosnmp.SnmpPacket) string {
+	fmt.Print(packet)
 	for _, variable := range packet.Variables {
 		if variable.Name == "1.3.6.1.6.3.1.1.4.1.0" || variable.Name == ".1.3.6.1.6.3.1.1.4.1.0" {
 			trapOID := fmt.Sprintf("%v", variable.Value)

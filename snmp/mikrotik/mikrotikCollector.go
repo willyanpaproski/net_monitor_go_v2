@@ -85,6 +85,8 @@ func (m *MikrotikCollector) CollectMetric(device interfaces.NetworkDevice, metri
 		return mikrotiksnmpcollectors.CollectMikrotikPhysicalInterfaces(snmpParams, device)
 	case "vlans":
 		return mikrotiksnmpcollectors.CollectMikrotikVlans(snmpParams, device)
+	case "temperature":
+		return mikrotiksnmpcollectors.CollectMikrotikTemperature(snmpParams, device)
 	default:
 		return nil, fmt.Errorf("Metric '%s' not supported by Mikrotik collector", metricName)
 	}
@@ -94,7 +96,7 @@ func (m *MikrotikCollector) GetSupportedMetrics() []string {
 	return []string{
 		"cpu_usage", "memory_usage", "disk_usage", "total_disk",
 		"interface_stats", "system_info", "physicalInterfaces",
-		"vlans",
+		"vlans", "temperature",
 	}
 }
 
@@ -107,6 +109,7 @@ func (m *MikrotikCollector) GetMetricMapping() map[string]string {
 		"total_disk":         "total_disk",
 		"physicalInterfaces": "physicalInterfaces",
 		"vlans":              "vlans",
+		"temperature":        "temperature",
 	}
 }
 

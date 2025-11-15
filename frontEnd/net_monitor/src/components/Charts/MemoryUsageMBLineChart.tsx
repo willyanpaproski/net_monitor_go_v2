@@ -1,5 +1,4 @@
 import { Box, Paper, Typography } from "@mui/material";
-import type { LineChartDataPoint } from "../../../types/LineChartDataPoint";
 import {
   Area,
   AreaChart,
@@ -9,16 +8,17 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import CustomChartTooltip from "../../../components/CustomChartTooltip";
+import CustomChartTooltip from "../CustomChartTooltip";
 import { useState, useEffect } from "react";
-import { useI18n } from "../../../hooks/usei18n";
+import { useI18n } from "../../hooks/usei18n";
+import type { LineChartDataPoint } from "../../types/LineChartDataPoint";
 
 type MemoryUsageLineChartProps = {
   currentMemory: number;
   memoryChartData: LineChartDataPoint[];
 };
 
-export default function MemoryUsageLineChart({
+export default function MemoryUsageMBLineChart({
   currentMemory,
   memoryChartData,
 }: MemoryUsageLineChartProps) {

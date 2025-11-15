@@ -1,8 +1,8 @@
 import { useOutletContext } from "react-router-dom";
 import { Box } from "@mui/material";
-import VlanDashboard from "./charts/VlanList";
 import TrapEventsMonitor from "../../components/TrapEventsMonitor";
 import { useTrapMonitor } from "../../hooks/useTrapMonitor";
+import VlanDashboard from "../../components/VlanList";
 
 type RouterDataContext = {
     vlans: any[];

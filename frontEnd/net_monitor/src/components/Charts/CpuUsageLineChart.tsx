@@ -1,5 +1,4 @@
 import { Box, Paper, Typography } from "@mui/material";
-import type { LineChartDataPoint } from "../../../types/LineChartDataPoint";
 import {
   Area,
   AreaChart,
@@ -9,9 +8,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import CustomChartTooltip from "../../../components/CustomChartTooltip";
 import { useState, useEffect } from "react";
-import { useI18n } from "../../../hooks/usei18n";
+import CustomChartTooltip from "../CustomChartTooltip";
+import { useI18n } from "../../hooks/usei18n";
+import type { LineChartDataPoint } from "../../types/LineChartDataPoint";
 
 type CpuUsageLineChartProps = {
   currentCpu: number;
@@ -38,6 +38,9 @@ export default function CpuUsageLineChart({
         border: "1px solid rgba(16, 185, 129, 0.2)",
         borderRadius: 2,
         backdropFilter: "blur(10px)",
+        height: 330,
+        display: "flex",
+        flexDirection: "column",
         position: "relative",
         overflow: "hidden",
         opacity: show ? 1 : 0,

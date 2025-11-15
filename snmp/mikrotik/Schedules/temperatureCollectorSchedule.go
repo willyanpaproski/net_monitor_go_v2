@@ -1,41 +1,41 @@
 package mikrotikScheduler
 
 import (
-	interfaces "net_monitor/interfaces"
-	models "net_monitor/models"
-	repository "net_monitor/repository"
+	"net_monitor/interfaces"
+	"net_monitor/models"
+	"net_monitor/repository"
 	"net_monitor/services"
-	mikrotik "net_monitor/snmp/mikrotik"
+	"net_monitor/snmp/mikrotik"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var _ interfaces.Scheduler = (*CPUScheduler)(nil)
+var _ interfaces.Scheduler = (*TemperatureScheduler)(nil)
 
-type CPUScheduler struct {
+type TemperatureScheduler struct {
 	RouterRepo *repository.MongoRepository[models.Roteador]
 	Collector  *mikrotik.MikrotikCollector
 	StopCh     chan struct{}
 }
 
-func NewCPUScheduler(
+func NewTemperatureScheduler(
 	routerRepo *repository.MongoRepository[models.Roteador],
 	collector *mikrotik.MikrotikCollector,
-) *CPUScheduler {
-	return &CPUScheduler{
+) *TemperatureScheduler {
+	return &TemperatureScheduler{
 		RouterRepo: routerRepo,
 		Collector:  collector,
 		StopCh:     make(chan struct{}),
 	}
 }
 
-func (s *CPUScheduler) Start() {
+func (s *TemperatureScheduler) Start() {
 	initialTimer := time.NewTimer(10 * time.Minute)
 	select {
 	case <-initialTimer.C:
-		s.collectAllCpuUsage()
+		s.collectAllTemperatureUsage()
 	case <-s.StopCh:
 		initialTimer.Stop()
 		return
@@ -45,18 +45,18 @@ func (s *CPUScheduler) Start() {
 	for {
 		select {
 		case <-ticker.C:
-			s.collectAllCpuUsage()
+			s.collectAllTemperatureUsage()
 		case <-s.StopCh:
 			return
 		}
 	}
 }
 
-func (s *CPUScheduler) Stop() {
+func (s *TemperatureScheduler) Stop() {
 	close(s.StopCh)
 }
 
-func (s *CPUScheduler) collectAllCpuUsage() {
+func (s *TemperatureScheduler) collectAllTemperatureUsage() {
 	routers, err := s.RouterRepo.GetByFilter(bson.M{
 		"integration": models.RoteadorMikrotik,
 		"active":      true,
@@ -69,27 +69,27 @@ func (s *CPUScheduler) collectAllCpuUsage() {
 	}
 	for _, router := range routers {
 		routerDevice := services.RouterAdapter{Router: router}
-		go s.collectCpuUsage(routerDevice)
+		go s.collectTemperature(routerDevice)
 	}
 }
 
-func (s *CPUScheduler) collectCpuUsage(device interfaces.NetworkDevice) {
-	cpuUsage, err := s.Collector.CollectMetric(device, "cpu_usage")
+func (s *TemperatureScheduler) collectTemperature(device interfaces.NetworkDevice) {
+	temperature, err := s.Collector.CollectMetric(device, "temperature")
 	if err != nil {
 		return
 	}
-	cpuUsageValue, ok := cpuUsage.(int)
+	temperatureValue, ok := temperature.(float64)
 	if !ok {
 		return
 	}
 	now := primitive.NewDateTimeFromTime(time.Now())
-	newRecord := models.CpuRecord{
+	newRecord := models.TemperatureRecord{
 		Timestamp: now,
-		Value:     cpuUsageValue,
+		Value:     temperatureValue,
 	}
 	update := bson.M{
 		"$push": bson.M{
-			"cpuUsageToday": newRecord,
+			"temperatureToday": newRecord,
 		},
 	}
 	err = s.RouterRepo.UpdateByFilter(

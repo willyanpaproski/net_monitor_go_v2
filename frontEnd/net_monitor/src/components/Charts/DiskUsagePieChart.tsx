@@ -1,34 +1,36 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { useState, useEffect } from "react";
-import { useI18n } from "../../../hooks/usei18n";
+import { useI18n } from "../../hooks/usei18n";
 
-type MemoryUsageDonutChartProps = {
-  currentMemory: number;
-  totalMemory: number;
+type DiskUsageDonutChartProps = {
+  currentDisk: number;
+  totalDisk: number;
 };
 
-export default function MemoryUsageDonutChart({
-  currentMemory,
-  totalMemory,
-}: MemoryUsageDonutChartProps) {
+export default function DiskUsagePieChart({
+  currentDisk,
+  totalDisk,
+}: DiskUsageDonutChartProps) {
   const { t } = useI18n();
   const [show, setShow] = useState(false);
   const [_animateText, setAnimateText] = useState(false);
+  const safeTotalDisk = totalDisk || 0;
+  const safeCurrentDisk = currentDisk || 0;
   const usedPercentage =
-    totalMemory > 0 ? (currentMemory / totalMemory) * 100 : 0;
-  const freeMemory = totalMemory - currentMemory;
+    safeTotalDisk > 0 ? (safeCurrentDisk / safeTotalDisk) * 100 : 0;
+  const freeDisk = safeTotalDisk - safeCurrentDisk;
 
   useEffect(() => {
-    setTimeout(() => setShow(true), 200);
-    setTimeout(() => setAnimateText(true), 1200);
+    setTimeout(() => setShow(true), 500);
+    setTimeout(() => setAnimateText(true), 1700);
   }, []);
 
   const data = [
-    { name: "used", value: currentMemory, color: "#8b5cf6" },
+    { name: "used", value: safeCurrentDisk, color: "#f59e0b" },
     {
       name: "free",
-      value: freeMemory > 0 ? freeMemory : 0,
+      value: freeDisk > 0 ? freeDisk : 0,
       color: "rgba(255, 255, 255, 0.03)",
     },
   ];
@@ -39,7 +41,7 @@ export default function MemoryUsageDonutChart({
       sx={{
         p: 3,
         bgcolor: "#0C1017",
-        border: "1px solid rgba(139, 92, 246, 0.2)",
+        border: "1px solid rgba(245, 158, 11, 0.2)",
         borderRadius: 2,
         backdropFilter: "blur(10px)",
         height: 330,
@@ -51,7 +53,7 @@ export default function MemoryUsageDonutChart({
       }}
     >
       <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
-        {t("routers.snmpMonitor.dashboard.memoryUsagePieChart.title")}
+        {t("routers.snmpMonitor.dashboard.diskUsagePieChart.title")}
       </Typography>
 
       <Box
@@ -100,7 +102,7 @@ export default function MemoryUsageDonutChart({
           <Typography
             variant="h3"
             sx={{
-              color: "#8b5cf6",
+              color: "#f59e0b",
               fontWeight: 800,
               fontSize: "1.8rem",
               lineHeight: 1,
@@ -117,7 +119,7 @@ export default function MemoryUsageDonutChart({
               fontWeight: 500,
             }}
           >
-            {t("routers.snmpMonitor.dashboard.memoryUsagePieChart.inUsage")}
+            {t("routers.snmpMonitor.dashboard.diskUsagePieChart.inUsage")}
           </Typography>
         </Box>
       </Box>
@@ -140,13 +142,13 @@ export default function MemoryUsageDonutChart({
               mb: 0.5,
             }}
           >
-            {t("routers.snmpMonitor.dashboard.memoryUsagePieChart.used")}
+            {t("routers.snmpMonitor.dashboard.diskUsagePieChart.used")}
           </Typography>
           <Typography
             variant="body1"
-            sx={{ color: "#8b5cf6", fontWeight: 700, fontSize: "0.95rem" }}
+            sx={{ color: "#f59e0b", fontWeight: 700, fontSize: "0.95rem" }}
           >
-            {currentMemory.toFixed(1)} MB
+            {safeCurrentDisk.toFixed(1)} MB
           </Typography>
         </Box>
         <Box sx={{ textAlign: "center" }}>
@@ -158,7 +160,7 @@ export default function MemoryUsageDonutChart({
               mb: 0.5,
             }}
           >
-            {t("routers.snmpMonitor.dashboard.memoryUsagePieChart.free")}
+            {t("routers.snmpMonitor.dashboard.diskUsagePieChart.free")}
           </Typography>
           <Typography
             variant="body1"
@@ -168,7 +170,7 @@ export default function MemoryUsageDonutChart({
               fontSize: "0.95rem",
             }}
           >
-            {freeMemory.toFixed(1)} MB
+            {freeDisk.toFixed(1)} MB
           </Typography>
         </Box>
         <Box sx={{ textAlign: "right" }}>
@@ -180,7 +182,7 @@ export default function MemoryUsageDonutChart({
               mb: 0.5,
             }}
           >
-            Total
+            {t("routers.snmpMonitor.dashboard.diskUsagePieChart.total")}
           </Typography>
           <Typography
             variant="body1"
@@ -190,7 +192,7 @@ export default function MemoryUsageDonutChart({
               fontSize: "0.95rem",
             }}
           >
-            {totalMemory.toFixed(1)} MB
+            {safeTotalDisk.toFixed(1)} MB
           </Typography>
         </Box>
       </Box>

@@ -184,7 +184,7 @@ func InitDependencies(router *gin.Engine) {
 
 	log.Println("Processadores de Métricas Registrados:")
 	for _, processor := range netflow.GetMetricProcessors() {
-		log.Printf("  ✓ %s", processor.Name())
+		log.Printf("%s", processor.Name())
 	}
 
 	listen := netflow.GetListenAddr()
