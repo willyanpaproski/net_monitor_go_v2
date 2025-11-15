@@ -85,6 +85,22 @@ var VendorMetricMappings = map[string][]MetricConfig{
 			Required:     true,
 		},
 	},
+	"tplinkp7000": {
+		{
+			Name:         "uptime",
+			Interval:     10 * time.Second,
+			DataKey:      "system_uptime",
+			FallbackKeys: []string{"system_uptime"},
+			Required:     true,
+		},
+		{
+			Name:         "cpu_usage",
+			Interval:     5 * time.Second,
+			DataKey:      "cpu_usage_percent",
+			FallbackKeys: []string{"cpu", "processor_usage"},
+			Required:     true,
+		},
+	},
 	"cisco": {
 		{
 			Name:         "cpu_usage",

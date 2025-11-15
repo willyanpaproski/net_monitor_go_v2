@@ -11,6 +11,7 @@ import (
 	routes "net_monitor/routes"
 	mikrotik "net_monitor/snmp/mikrotik"
 	thinkolt "net_monitor/snmp/think"
+	"net_monitor/snmp/tplinkp7000"
 	"net_monitor/snmp/trap/handlers"
 	"time"
 
@@ -143,6 +144,9 @@ func InitDependencies(router *gin.Engine) {
 
 	thinkCollector := thinkolt.NewThinkCollector()
 	snmpService.RegisterCollector(thinkCollector)
+
+	tpLinkP7000Collector := tplinkp7000.NewTpLinkP7000Collector()
+	snmpService.RegisterCollector(tpLinkP7000Collector)
 
 	routes.SetupWebSocketRoutes(router, hub, snmpService)
 

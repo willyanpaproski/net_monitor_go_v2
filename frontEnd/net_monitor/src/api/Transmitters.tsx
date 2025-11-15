@@ -13,7 +13,7 @@ export type Transmitter = {
     accessUser: string;
     active: boolean;
     description: string;
-    integration: "huawei" | "datacom" | "zte" | "think";
+    integration: "huawei" | "datacom" | "zte" | "think" | "tplinkp7000";
     ipAddress: string;
     name: string;
     snmpCommunity: string;

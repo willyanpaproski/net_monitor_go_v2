@@ -5,10 +5,11 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 type TransmissorFibraIntegracaoType string
 
 const (
-	OltHuawei  TransmissorFibraIntegracaoType = "huawei"
-	OltDatacom TransmissorFibraIntegracaoType = "datacom"
-	OltZTE     TransmissorFibraIntegracaoType = "zte"
-	OltThink   TransmissorFibraIntegracaoType = "think"
+	OltHuawei      TransmissorFibraIntegracaoType = "huawei"
+	OltDatacom     TransmissorFibraIntegracaoType = "datacom"
+	OltZTE         TransmissorFibraIntegracaoType = "zte"
+	OltThink       TransmissorFibraIntegracaoType = "think"
+	OltTpLinkP7000 TransmissorFibraIntegracaoType = "tplinkp7000"
 )
 
 type TransmissorFibra struct {

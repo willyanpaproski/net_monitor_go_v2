@@ -111,6 +111,7 @@ export function ModalCreateEditTransmitter({ isVisible, setIsVisible, transmitte
                             <MenuItem value="datacom">Datacom</MenuItem>
                             <MenuItem value="zte">ZTE</MenuItem>
                             <MenuItem value="think">Think</MenuItem>
+                            <MenuItem value="tplinkp7000">TP-Link P7000</MenuItem>
                         </Select>
                     </FormGrid>
                     <FormGrid size={{ xs: 12, md: 6 }}>

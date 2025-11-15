@@ -45,12 +45,33 @@ export default function TransmitterSnmpMonitor() {
         return data ? data.value as string : '00h 00m 00s';
     }, [monitor.routerData, transmitterId]);
 
+    const cpuChartData = useMemo(() => {
+        const data = monitor.getMetricData(transmitterId!, 'cpu_usage');
+        const uniqueData = data.reduce((acc, item) => {
+            const exists = acc.find(d => d.timestamp === item.timestamp);
+            if (!exists) {
+                acc.push(item);
+            }
+            return acc;
+        }, [] as typeof data);
+        
+        return uniqueData.map((item) => ({
+            time: new Date(item.timestamp).toLocaleTimeString(),
+            timestamp: item.timestamp,
+            value: item.value as number,
+        }));
+    }, [monitor.routerData, transmitterId]);
+
+    const currentCpu = cpuChartData[cpuChartData.length - 1]?.value as number || 0;
+
     const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
         navigate(newValue);
     };
 
     const outletContext = {
         uptime,
+        currentCpu,
+        cpuChartData,
         websocketRef: monitor.websocketRef,
         isConnected: monitor.isConnected
     }

@@ -13,7 +13,8 @@ export function useTransmitterSchema() {
             "huawei",
             "datacom",
             "zte",
-            "think"
+            "think",
+            "tplinkp7000"
         ]),
         name: z.string(),
         description: z.string(),
