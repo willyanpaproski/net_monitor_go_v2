@@ -21,6 +21,16 @@ type PonInterface struct {
 	OpticalVcc     float64 `json:"opticalVcc"`
 }
 
+type OnuInfo struct {
+	Index         string  `json:"index"`
+	SerialNumber  string  `json:"serialNumber"`
+	OnlineStatus  int     `json:"onlineStatus"`
+	LastDownCause string  `json:"lastDownCause"`
+	RXPower       float64 `json:"rxPower"`
+	TXPower       float64 `json:"txPower"`
+	BiasCurrent   float64 `json:"biasCurrent"`
+}
+
 type WalkResult struct {
 	OID   string
 	Value interface{}

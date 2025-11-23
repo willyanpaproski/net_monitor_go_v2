@@ -45,6 +45,10 @@ func (t *TpLinkP7000Collector) Collect(device interfaces.NetworkDevice) (map[str
 		data["temperature"] = temperature
 	}
 
+	if onuInfo, err := tplinkp7000snmpcollectors.CollectOnuInfo(snmpParams, device); err == nil {
+		data["onuInfo"] = onuInfo
+	}
+
 	return data, nil
 }
 
@@ -64,6 +68,8 @@ func (t *TpLinkP7000Collector) CollectMetric(device interfaces.NetworkDevice, me
 		return tplinkp7000snmpcollectors.CollectTpLinkP7000MemoryUsagePercent(snmpParams, device)
 	case "temperature":
 		return tplinkp7000snmpcollectors.CollectTpLinkP7000Temperature(snmpParams, device)
+	case "onuInfo":
+		return tplinkp7000snmpcollectors.CollectOnuInfo(snmpParams, device)
 	default:
 		return nil, fmt.Errorf("Metric '%s' not supported by TpLinkP7000 collector", metricName)
 	}
@@ -74,6 +80,7 @@ func (t *TpLinkP7000Collector) GetSupportedMetrics() []string {
 		"cpu_usage", "memory_usage", "disk_usage", "total_disk",
 		"interface_stats", "system_info", "physicalInterfaces",
 		"vlans", "memory_usage_percent", "temperature", "ponInterfaces",
+		"onuInfo",
 	}
 }
 
@@ -89,6 +96,7 @@ func (t *TpLinkP7000Collector) GetMetricMapping() map[string]string {
 		"memory_usage_percent": "memory_usage_percent",
 		"temperature":          "temperature",
 		"ponInterfaces":        "ponInterfaces",
+		"onuInfo":              "onuInfo",
 	}
 }
 

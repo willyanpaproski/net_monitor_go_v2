@@ -181,6 +181,7 @@ func InitDependencies(router *gin.Engine) {
 	log.Println("MetricContext inicializado com MongoDB e RouterRepository")
 
 	netflow.RegisterMetricProcessor(metrics.NewIPVersionMetricProcessor())
+	netflow.RegisterMetricProcessor(metrics.NewPacketLossMetricProcessor())
 
 	log.Println("Processadores de Métricas Registrados:")
 	for _, processor := range netflow.GetMetricProcessors() {

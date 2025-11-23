@@ -41,6 +41,10 @@ var ipfixFieldNames = map[uint16]string{
 	81:  "postSourceMacAddress",
 	85:  "octetTotalCount",
 	86:  "packetTotalCount",
+	132: "droppedOctetDeltaCount",
+	133: "droppedPacketDeltaCount",
+	134: "droppedOctetTotalCount",
+	135: "droppedPacketTotalCount",
 	136: "flowEndReason",
 	148: "flowId",
 	150: "flowStartSeconds",
@@ -243,6 +247,14 @@ func decodeField(record *FlowRecord, fieldID uint16, fieldName string, data []by
 		record.RawFields[fieldName] = decodeMacAddress(data)
 	case 81:
 		record.RawFields[fieldName] = decodeMacAddress(data)
+	case 132:
+		record.RawFields[fieldName] = binary.BigEndian.Uint64(data)
+	case 133:
+		record.RawFields[fieldName] = binary.BigEndian.Uint64(data)
+	case 134:
+		record.RawFields[fieldName] = binary.BigEndian.Uint64(data)
+	case 135:
+		record.RawFields[fieldName] = binary.BigEndian.Uint64(data)
 	case 152:
 		record.FlowStartMilliseconds = readUintN(data)
 	case 153:

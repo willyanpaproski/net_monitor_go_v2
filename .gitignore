@@ -1,2 +1,4 @@
 /mongodbpath
 /.docker/data/mongodb
+/.vscode
+/~
