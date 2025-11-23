@@ -15,6 +15,8 @@ func CollectOnuInfo(goSnmp *gosnmp.GoSNMP, device interfaces.NetworkDevice) ([]s
 	baseRXPowerOid := "1.3.6.1.4.1.11863.6.100.1.7.2.1.24"
 	baseTxPowerOid := "1.3.6.1.4.1.11863.6.100.1.7.2.1.22"
 	baseBiasCurrentOid := "1.3.6.1.4.1.11863.6.100.1.7.2.1.26"
+	baseVoltageOid := "1.3.6.1.4.1.11863.6.100.1.7.2.1.27"
+	baseTemperatureOid := "1.3.6.1.4.1.11863.6.100.1.7.2.1.28"
 
 	onus := make([]snmp.OnuInfo, 0)
 
@@ -44,6 +46,16 @@ func CollectOnuInfo(goSnmp *gosnmp.GoSNMP, device interfaces.NetworkDevice) ([]s
 	}
 
 	biasCurrentMap, err := snmp.GetTreeAsIndexMap(goSnmp, baseBiasCurrentOid, true)
+	if err != nil {
+		return nil, err
+	}
+
+	voltageMap, err := snmp.GetTreeAsIndexMap(goSnmp, baseVoltageOid, true)
+	if err != nil {
+		return nil, err
+	}
+
+	temperatureMap, err := snmp.GetTreeAsIndexMap(goSnmp, baseTemperatureOid, true)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +95,18 @@ func CollectOnuInfo(goSnmp *gosnmp.GoSNMP, device interfaces.NetworkDevice) ([]s
 		if biasCurrentResult, hasBiasCurrentResult := biasCurrentMap[index]; hasBiasCurrentResult {
 			if biasCurrent, err := biasCurrentResult.IntValue(); err == nil {
 				onu.BiasCurrent = float64(biasCurrent)
+			}
+		}
+
+		if voltageResult, hasVoltageResult := voltageMap[index]; hasVoltageResult {
+			if voltage, err := voltageResult.IntValue(); err == nil {
+				onu.Voltage = float64(voltage) / 1000
+			}
+		}
+
+		if temperatureResult, hasTemperatureResult := temperatureMap[index]; hasTemperatureResult {
+			if temperature, err := temperatureResult.IntValue(); err == nil {
+				onu.Temperature = float64(temperature)
 			}
 		}
 

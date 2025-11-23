@@ -29,6 +29,8 @@ type OnuInfo struct {
 	RXPower       float64 `json:"rxPower"`
 	TXPower       float64 `json:"txPower"`
 	BiasCurrent   float64 `json:"biasCurrent"`
+	Voltage       float64 `json:"voltage"`
+	Temperature   float64 `json:"temperature"`
 }
 
 type WalkResult struct {
