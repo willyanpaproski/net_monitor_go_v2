@@ -182,6 +182,7 @@ func InitDependencies(router *gin.Engine) {
 
 	netflow.RegisterMetricProcessor(metrics.NewIPVersionMetricProcessor())
 	netflow.RegisterMetricProcessor(metrics.NewPacketLossMetricProcessor())
+	netflow.RegisterMetricProcessor(metrics.NewDNSQualityMetricProcessor())
 
 	log.Println("Processadores de Métricas Registrados:")
 	for _, processor := range netflow.GetMetricProcessors() {
