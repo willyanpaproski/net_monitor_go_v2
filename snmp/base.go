@@ -105,6 +105,16 @@ func (w WalkResult) IntValue() (int, error) {
 	}
 }
 
+func ContainsOid(rawOid, partialOid string) bool {
+	if len(rawOid) > 0 && rawOid[0] == '.' {
+		rawOid = rawOid[1:]
+	}
+	if len(partialOid) > 0 && partialOid[0] == '.' {
+		partialOid = partialOid[1:]
+	}
+	return len(rawOid) >= len(partialOid) && rawOid[:len(partialOid)] == partialOid
+}
+
 func (w WalkResult) GetIndex(baseOid string) string {
 	oid := w.OID
 	if len(oid) > 0 && oid[0] == '.' {

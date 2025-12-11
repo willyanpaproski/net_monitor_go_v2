@@ -207,20 +207,20 @@ func (p *DNSQualityMetricProcessor) Process(router *models.Roteador, decoded *ne
 			stats.ResponseBytes += record.OctetDeltaCount
 		}
 
-		log.Printf("[DNSQualityMetric DEBUG] Flow DNS detectado - Type: %s, DNS: %s, Client: %s",
-			map[bool]string{true: "QUERY", false: "RESPONSE"}[isDNSQuery], dnsServerIP, clientIP)
-		log.Printf("[DNSQualityMetric DEBUG]   FlowStartMilliseconds: %d", record.FlowStartMilliseconds)
-		log.Printf("[DNSQualityMetric DEBUG]   FlowEndMilliseconds: %d", record.FlowEndMilliseconds)
-		log.Printf("[DNSQualityMetric DEBUG]   RawFields: %+v", record.RawFields)
+		// log.Printf("[DNSQualityMetric DEBUG] Flow DNS detectado - Type: %s, DNS: %s, Client: %s",
+		// 	map[bool]string{true: "QUERY", false: "RESPONSE"}[isDNSQuery], dnsServerIP, clientIP)
+		// log.Printf("[DNSQualityMetric DEBUG]   FlowStartMilliseconds: %d", record.FlowStartMilliseconds)
+		// log.Printf("[DNSQualityMetric DEBUG]   FlowEndMilliseconds: %d", record.FlowEndMilliseconds)
+		// log.Printf("[DNSQualityMetric DEBUG]   RawFields: %+v", record.RawFields)
 
-		if timestamp > 0 && clientIP != "" {
-			flowType := "QUERY"
-			if !isDNSQuery {
-				flowType = "RESPONSE"
-			}
-			log.Printf("[DNSQualityMetric DEBUG] %s - DNS: %s, Client: %s, Timestamp: %d, FlowStart: %d, FlowEnd: %d",
-				flowType, dnsServerIP, clientIP, timestamp, record.FlowStartMilliseconds, record.FlowEndMilliseconds)
-		}
+		// if timestamp > 0 && clientIP != "" {
+		// 	flowType := "QUERY"
+		// 	if !isDNSQuery {
+		// 		flowType = "RESPONSE"
+		// 	}
+		// 	log.Printf("[DNSQualityMetric DEBUG] %s - DNS: %s, Client: %s, Timestamp: %d, FlowStart: %d, FlowEnd: %d",
+		// 		flowType, dnsServerIP, clientIP, timestamp, record.FlowStartMilliseconds, record.FlowEndMilliseconds)
+		// }
 
 		if timestamp > 0 && clientIP != "" {
 			dnsFlows = append(dnsFlows, DNSFlow{
@@ -232,26 +232,26 @@ func (p *DNSQualityMetricProcessor) Process(router *models.Roteador, decoded *ne
 		}
 	}
 
-	log.Printf("[DNSQualityMetric DEBUG] Total de flows DNS coletados: %d", len(dnsFlows))
+	//log.Printf("[DNSQualityMetric DEBUG] Total de flows DNS coletados: %d", len(dnsFlows))
 
 	if len(dnsServerStats) == 0 {
 		return nil
 	}
 
-	for _, stats := range dnsServerStats {
-		log.Printf("[DNSQualityMetric DEBUG] Stats para %s - ResponseTimeCount: %d, TotalResponseTime: %d, Under50ms: %d",
-			stats.ServerIP, stats.ResponseTimeCount, stats.TotalResponseTime, stats.Under50ms)
+	// for _, stats := range dnsServerStats {
+	// 	log.Printf("[DNSQualityMetric DEBUG] Stats para %s - ResponseTimeCount: %d, TotalResponseTime: %d, Under50ms: %d",
+	// 		stats.ServerIP, stats.ResponseTimeCount, stats.TotalResponseTime, stats.Under50ms)
 
-		dnsServerID, err := p.ensureDNSServer(stats.ServerIP)
-		if err != nil {
-			log.Printf("[DNSQualityMetric] Erro ao registrar servidor DNS %s: %v", stats.ServerIP, err)
-			continue
-		}
+	// 	dnsServerID, err := p.ensureDNSServer(stats.ServerIP)
+	// 	if err != nil {
+	// 		log.Printf("[DNSQualityMetric] Erro ao registrar servidor DNS %s: %v", stats.ServerIP, err)
+	// 		continue
+	// 	}
 
-		if err := p.saveMetrics(router, decoded.SrcIP, dnsServerID, stats); err != nil {
-			log.Printf("[DNSQualityMetric] Erro ao salvar métricas para DNS %s: %v", stats.ServerIP, err)
-		}
-	}
+	// 	if err := p.saveMetrics(router, decoded.SrcIP, dnsServerID, stats); err != nil {
+	// 		log.Printf("[DNSQualityMetric] Erro ao salvar métricas para DNS %s: %v", stats.ServerIP, err)
+	// 	}
+	// }
 
 	return nil
 }
@@ -279,8 +279,8 @@ func (p *DNSQualityMetricProcessor) calculateAbsoluteTime(rawFields map[string]i
 
 	if systemInitTime > 0 && sysUpTime > 0 {
 		absoluteTime := systemInitTime + sysUpTime
-		log.Printf("[DNSQualityMetric DEBUG] Timestamp calculado: systemInit=%d + sysUpTime=%d = %d",
-			systemInitTime, sysUpTime, absoluteTime)
+		// log.Printf("[DNSQualityMetric DEBUG] Timestamp calculado: systemInit=%d + sysUpTime=%d = %d",
+		// 	systemInitTime, sysUpTime, absoluteTime)
 		return absoluteTime
 	}
 
