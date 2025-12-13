@@ -177,7 +177,6 @@ func (ts *TrapService) logEvent(event *interfaces.TrapEvent) {
 		event.DeviceType,
 		event.Vendor,
 		event.EventType,
-		event.Severity,
 		event.Message,
 	)
 

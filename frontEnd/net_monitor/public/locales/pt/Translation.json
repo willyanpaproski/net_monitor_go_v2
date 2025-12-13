@@ -9,6 +9,11 @@
         "signIn": "Login",
         "email": "Email",
         "password": "Senha",
+        "welcome": "Bem-Vindo ao seu Net Monitor",
+        "subtitle": "Faça login para continuar",
+        "footer": "Esqueceu sua senha?",
+        "emailPlaceholder": "Preencha seu email",
+        "passwordPlaceholder": "Preencha sua senha",
         "schema": {
             "invalidEmail": "Informe um email válido",
             "passwordLength": "A senha deve conter no mínimo 6 caracteres"

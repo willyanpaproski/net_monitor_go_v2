@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 	"net_monitor/interfaces"
 	"net_monitor/snmp"
 	"strings"
@@ -34,45 +33,28 @@ func (h *ThinkOltTrapHandler) GetVendor() string {
 }
 
 func (h *ThinkOltTrapHandler) CanHandle(trapOID string) bool {
-	log.Printf("[THINK DEBUG] Verificando se pode tratar trap OID: %s", trapOID)
-
-	if h.contains(trapOID, THINK_BASE_OID) {
-		//log.Printf("[THINK DEBUG] Trap OID reconhecida como Think: %s", trapOID)
+	if snmp.ContainsOid(trapOID, THINK_BASE_OID) {
 		return true
 	}
 
 	canHandleRFC := h.rfcHandler.CanHandle(trapOID)
-	//log.Printf("[THINK DEBUG] RFC pode tratar? %v", canHandleRFC)
 	return canHandleRFC
 }
 
-func (h *ThinkOltTrapHandler) GetSupportedTraps() []string {
-	thinkOltTraps := []string{
-		THINK_ONU_CONFIG_STATE,
-		THINK_ONU_SN_OID,
-	}
-	return append(thinkOltTraps, h.rfcHandler.GetSupportedTraps()...)
-}
-
 func (h *ThinkOltTrapHandler) ParseTrap(packet *gosnmp.SnmpPacket, device interfaces.NetworkDevice, deviceType string) (*interfaces.TrapEvent, error) {
-	// log.Printf("[THINK DEBUG] Iniciando parse da trap para dispositivo %s", device.GetName())
-
-	log.Printf("[THINK DEBUG] Pacote contém %d variáveis:", len(packet.Variables))
-	for i, variable := range packet.Variables {
-		log.Printf("[THINK DEBUG] Variável %d: OID=%s, Type=%T, Value=%v",
-			i, variable.Name, variable.Value, variable.Value)
-	}
+	// log.Printf("[THINK DEBUG] Pacote contém %d variáveis:", len(packet.Variables))
+	// for i, variable := range packet.Variables {
+	// 	log.Printf("[THINK DEBUG] Variável %d: OID=%s, Type=%T, Value=%v",
+	// 		i, variable.Name, variable.Value, variable.Value)
+	// }
 
 	trapOID := h.rfcHandler.ExtractTrapOID(packet)
-	//log.Printf("[THINK DEBUG] Trap OID extraído: %s", trapOID)
 
 	if trapOID == "" {
-		//log.Printf("[THINK ERROR] Trap OID não encontrado no pacote")
-		return nil, fmt.Errorf("trap OID não encontrado")
+		return nil, fmt.Errorf("trap OID not found")
 	}
 
 	if h.rfcHandler.CanHandle(trapOID) {
-		//log.Printf("[THINK DEBUG] Delegando para handler RFC")
 		return h.rfcHandler.ParseTrap(packet, device, deviceType)
 	}
 
@@ -96,7 +78,6 @@ func (h *ThinkOltTrapHandler) ParseTrap(packet *gosnmp.SnmpPacket, device interf
 
 func (h *ThinkOltTrapHandler) parseOnuConfigStateChange(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "ONU_STATE_CHANGE"
-	event.Severity = "info"
 	event.Message = "ONU mudou de estado de configuração"
 
 	h.extractThinkONUData(packet, event)
@@ -106,7 +87,6 @@ func (h *ThinkOltTrapHandler) parseOnuConfigStateChange(packet *gosnmp.SnmpPacke
 
 func (h *ThinkOltTrapHandler) parseGenericThinkTrap(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "think_generic_trap"
-	event.Severity = "info"
 	event.Message = "Trap Think genérica recebida"
 
 	h.extractThinkONUData(packet, event)
@@ -148,17 +128,5 @@ func (h *ThinkOltTrapHandler) extractThinkONUData(packet *gosnmp.SnmpPacket, eve
 		OnuStatus:    onuStatus,
 	}
 
-	fmt.Println(event.OnuChangeEvent)
-
 	h.rfcHandler.ExtractInterfaceData(packet, event)
-}
-
-func (h *ThinkOltTrapHandler) contains(haystack, needle string) bool {
-	if len(haystack) > 0 && haystack[0] == '.' {
-		haystack = haystack[1:]
-	}
-	if len(needle) > 0 && needle[0] == '.' {
-		needle = needle[1:]
-	}
-	return len(haystack) >= len(needle) && haystack[:len(needle)] == needle
 }

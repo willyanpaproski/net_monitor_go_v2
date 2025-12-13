@@ -46,7 +46,6 @@
   }
 }
 
-/* Para telas muito pequenas ou zoom alto */
 @media (max-width: 360px) {
   .loginCard {
     max-width: 98vw;

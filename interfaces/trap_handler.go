@@ -19,7 +19,6 @@ type TrapEvent struct {
 	Vendor         string                 `json:"vendor"`
 	TrapOID        string                 `json:"trap_oid"`
 	EventType      string                 `json:"event_type"`
-	Severity       string                 `json:"severity"`
 	Message        string                 `json:"message"`
 	Data           map[string]interface{} `json:"data"`
 	OnuChangeEvent ONUChangeConfigEvent   `json:"onuChangeEvent"`
@@ -30,5 +29,4 @@ type TrapHandler interface {
 	GetVendor() string
 	CanHandle(trapOID string) bool
 	ParseTrap(packet *gosnmp.SnmpPacket, device NetworkDevice, deviceType string) (*TrapEvent, error)
-	GetSupportedTraps() []string
 }

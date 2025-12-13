@@ -43,16 +43,6 @@ func (h *RFCTrapHandler) CanHandle(trapOID string) bool {
 	return standardTraps[trapOID]
 }
 
-func (h *RFCTrapHandler) GetSupportedTraps() []string {
-	return []string{
-		OID_LINK_DOWN,
-		OID_LINK_UP,
-		OID_COLD_START,
-		OID_WARM_START,
-		OID_AUTH_FAILURE,
-	}
-}
-
 func (h *RFCTrapHandler) ParseTrap(packet *gosnmp.SnmpPacket, device interfaces.NetworkDevice, deviceType string) (*interfaces.TrapEvent, error) {
 	event := &interfaces.TrapEvent{
 		DeviceID:   device.GetID(),
@@ -107,7 +97,6 @@ func (h *RFCTrapHandler) ExtractTrapOID(packet *gosnmp.SnmpPacket) string {
 
 func (h *RFCTrapHandler) parseLinkDown(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "link_down"
-	event.Severity = "warning"
 	event.Message = "Link de interface está DOWN"
 
 	h.ExtractInterfaceData(packet, event)
@@ -117,7 +106,6 @@ func (h *RFCTrapHandler) parseLinkDown(packet *gosnmp.SnmpPacket, event *interfa
 
 func (h *RFCTrapHandler) parseLinkUp(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "link_up"
-	event.Severity = "info"
 	event.Message = "Link de interface está UP"
 
 	h.ExtractInterfaceData(packet, event)
@@ -127,7 +115,6 @@ func (h *RFCTrapHandler) parseLinkUp(packet *gosnmp.SnmpPacket, event *interface
 
 func (h *RFCTrapHandler) parseColdStart(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "cold_start"
-	event.Severity = "critical"
 	event.Message = "Dispositivo reiniciado (cold start)"
 
 	return event, nil
@@ -135,7 +122,6 @@ func (h *RFCTrapHandler) parseColdStart(packet *gosnmp.SnmpPacket, event *interf
 
 func (h *RFCTrapHandler) parseWarmStart(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "warm_start"
-	event.Severity = "warning"
 	event.Message = "Dispositivo reiniciado (warm start)"
 
 	return event, nil
@@ -143,7 +129,6 @@ func (h *RFCTrapHandler) parseWarmStart(packet *gosnmp.SnmpPacket, event *interf
 
 func (h *RFCTrapHandler) parseAuthFailure(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "auth_failure"
-	event.Severity = "critical"
 	event.Message = "Falha de autenticação SNMP detectada"
 
 	return event, nil

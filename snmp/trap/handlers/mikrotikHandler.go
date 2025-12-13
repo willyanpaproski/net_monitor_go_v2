@@ -39,18 +39,6 @@ func (h *MikrotikTrapHandler) CanHandle(trapOID string) bool {
 	return h.rfcHandler.CanHandle(trapOID)
 }
 
-func (h *MikrotikTrapHandler) GetSupportedTraps() []string {
-	mikrotikTraps := []string{
-		MIKROTIK_LINK_UP,
-		MIKROTIK_LINK_DOWN,
-		MIKROTIK_HIGH_CPU,
-		MIKROTIK_HIGH_MEMORY,
-		MIKROTIK_DISK_FULL,
-		MIKROTIK_LICENSE_EXPIRE,
-	}
-	return append(mikrotikTraps, h.rfcHandler.GetSupportedTraps()...)
-}
-
 func (h *MikrotikTrapHandler) ParseTrap(packet *gosnmp.SnmpPacket, device interfaces.NetworkDevice, deviceType string) (*interfaces.TrapEvent, error) {
 	trapOID := h.extractTrapOID(packet)
 	if trapOID == "" {
@@ -92,7 +80,6 @@ func (h *MikrotikTrapHandler) ParseTrap(packet *gosnmp.SnmpPacket, device interf
 
 func (h *MikrotikTrapHandler) parseMikrotikLinkUp(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "mikrotik_link_up"
-	event.Severity = "info"
 	event.Message = "Mikrotik interface UP"
 
 	h.extractMikrotikInterfaceData(packet, event)
@@ -102,7 +89,6 @@ func (h *MikrotikTrapHandler) parseMikrotikLinkUp(packet *gosnmp.SnmpPacket, eve
 
 func (h *MikrotikTrapHandler) parseMikrotikLinkDown(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "mikrotik_link_down"
-	event.Severity = "warning"
 	event.Message = "Mikrotik interface DOWN"
 
 	h.extractMikrotikInterfaceData(packet, event)
@@ -112,7 +98,6 @@ func (h *MikrotikTrapHandler) parseMikrotikLinkDown(packet *gosnmp.SnmpPacket, e
 
 func (h *MikrotikTrapHandler) parseHighCPU(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "high_cpu"
-	event.Severity = "warning"
 	event.Message = "Mikrotik high CPU usage detected"
 
 	for _, variable := range packet.Variables {
@@ -129,7 +114,6 @@ func (h *MikrotikTrapHandler) parseHighCPU(packet *gosnmp.SnmpPacket, event *int
 
 func (h *MikrotikTrapHandler) parseHighMemory(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "high_memory"
-	event.Severity = "warning"
 	event.Message = "Mikrotik high memory usage detected"
 
 	for _, variable := range packet.Variables {
@@ -146,7 +130,6 @@ func (h *MikrotikTrapHandler) parseHighMemory(packet *gosnmp.SnmpPacket, event *
 
 func (h *MikrotikTrapHandler) parseDiskFull(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "disk_full"
-	event.Severity = "critical"
 	event.Message = "Mikrotik disk full"
 
 	for _, variable := range packet.Variables {
@@ -163,7 +146,6 @@ func (h *MikrotikTrapHandler) parseDiskFull(packet *gosnmp.SnmpPacket, event *in
 
 func (h *MikrotikTrapHandler) parseLicenseExpire(packet *gosnmp.SnmpPacket, event *interfaces.TrapEvent) (*interfaces.TrapEvent, error) {
 	event.EventType = "license_expire"
-	event.Severity = "warning"
 	event.Message = "Licença próxima do vencimento"
 
 	for _, variable := range packet.Variables {
