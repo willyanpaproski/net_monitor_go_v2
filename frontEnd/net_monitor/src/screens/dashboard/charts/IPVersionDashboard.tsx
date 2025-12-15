@@ -721,22 +721,40 @@ export default function IPVersionDashboard() {
             <Box sx={{ flex: 1, position: 'relative' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
+                  <defs>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                    <linearGradient id="gradientIPv4Pie" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#00d4ff" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#0099cc" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="gradientIPv6Pie" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#059669" stopOpacity={1} />
+                    </linearGradient>
+                  </defs>
                   <Pie
                     data={pieData}
                     cx="50%"
                     cy="50%"
                     innerRadius="60%"
                     outerRadius="85%"
-                    paddingAngle={3}
+                    paddingAngle={4}
                     dataKey="value"
                     startAngle={90}
                     endAngle={-270}
                     animationDuration={1200}
                     animationBegin={400}
                     animationEasing="ease-out"
+                    strokeWidth={2}
                   >
-                    <Cell fill={COLORS.ipv4} stroke="none" />
-                    <Cell fill={COLORS.ipv6} stroke="none" />
+                    <Cell fill="url(#gradientIPv4Pie)" stroke="rgba(0, 212, 255, 0.3)" filter="url(#glow)" />
+                    <Cell fill="url(#gradientIPv6Pie)" stroke="rgba(16, 185, 129, 0.3)" filter="url(#glow)" />
                   </Pie>
                   <Tooltip
                     content={({ active, payload }) => {
@@ -858,29 +876,43 @@ export default function IPVersionDashboard() {
                   >
                     <defs>
                       <linearGradient id="colorIPv4" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={COLORS.ipv4} stopOpacity={0.4} />
-                        <stop offset="100%" stopColor={COLORS.ipv4} stopOpacity={0} />
+                        <stop offset="0%" stopColor={COLORS.ipv4} stopOpacity={0.6} />
+                        <stop offset="50%" stopColor={COLORS.ipv4} stopOpacity={0.3} />
+                        <stop offset="100%" stopColor={COLORS.ipv4} stopOpacity={0.05} />
                       </linearGradient>
                       <linearGradient id="colorIPv6" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={COLORS.ipv6} stopOpacity={0.4} />
-                        <stop offset="100%" stopColor={COLORS.ipv6} stopOpacity={0} />
+                        <stop offset="0%" stopColor={COLORS.ipv6} stopOpacity={0.6} />
+                        <stop offset="50%" stopColor={COLORS.ipv6} stopOpacity={0.3} />
+                        <stop offset="100%" stopColor={COLORS.ipv6} stopOpacity={0.05} />
                       </linearGradient>
+                      <filter id="shadow">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.3"/>
+                      </filter>
                     </defs>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="rgba(255, 255, 255, 0.05)"
+                      stroke="rgba(255, 255, 255, 0.08)"
                       vertical={false}
+                      strokeOpacity={0.5}
                     />
                     <XAxis
                       dataKey={dataKey}
                       tickFormatter={tickFormatter}
-                      tick={{ fill: 'rgba(248, 250, 252, 0.6)', fontSize: 11 }}
-                      axisLine={{ stroke: 'rgba(248, 250, 252, 0.1)' }}
+                      tick={{ fill: 'rgba(248, 250, 252, 0.7)', fontSize: 11, fontWeight: 500 }}
+                      axisLine={{ stroke: 'rgba(0, 212, 255, 0.2)', strokeWidth: 1.5 }}
+                      tickLine={{ stroke: 'rgba(0, 212, 255, 0.2)' }}
                     />
                     <YAxis
                       domain={[0, 100]}
-                      tick={{ fill: 'rgba(248, 250, 252, 0.6)', fontSize: 11 }}
-                      axisLine={{ stroke: 'rgba(248, 250, 252, 0.1)' }}
+                      tick={{ fill: 'rgba(248, 250, 252, 0.7)', fontSize: 11, fontWeight: 500 }}
+                      axisLine={{ stroke: 'rgba(0, 212, 255, 0.2)', strokeWidth: 1.5 }}
+                      tickLine={{ stroke: 'rgba(0, 212, 255, 0.2)' }}
+                      label={{ 
+                        value: '%', 
+                        angle: -90, 
+                        position: 'insideLeft',
+                        style: { fill: 'rgba(248, 250, 252, 0.5)', fontSize: 10 }
+                      }}
                     />
                     <Tooltip content={<FlowPercentTooltip />} />
                     <Area
@@ -892,6 +924,19 @@ export default function IPVersionDashboard() {
                       animationDuration={1200}
                       animationBegin={400}
                       cursor={!selectedDate ? 'pointer' : 'default'}
+                      dot={{ 
+                        fill: COLORS.ipv4, 
+                        strokeWidth: 2, 
+                        stroke: '#fff',
+                        r: 4,
+                        filter: 'url(#shadow)'
+                      }}
+                      activeDot={{ 
+                        r: 6, 
+                        fill: COLORS.ipv4,
+                        stroke: '#fff',
+                        strokeWidth: 2
+                      }}
                     />
                     <Area
                       type="monotone"
@@ -902,6 +947,19 @@ export default function IPVersionDashboard() {
                       animationDuration={1200}
                       animationBegin={600}
                       cursor={!selectedDate ? 'pointer' : 'default'}
+                      dot={{ 
+                        fill: COLORS.ipv6, 
+                        strokeWidth: 2, 
+                        stroke: '#fff',
+                        r: 4,
+                        filter: 'url(#shadow)'
+                      }}
+                      activeDot={{ 
+                        r: 6, 
+                        fill: COLORS.ipv6,
+                        stroke: '#fff',
+                        strokeWidth: 2
+                      }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -975,39 +1033,65 @@ export default function IPVersionDashboard() {
               <BarChart
                 data={bytesData}
                 margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
+                barGap={4}
+                barCategoryGap="20%"
               >
+                <defs>
+                  <linearGradient id="barGradientIPv4" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#00d4ff" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#0099cc" stopOpacity={0.8} />
+                  </linearGradient>
+                  <linearGradient id="barGradientIPv6" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
+                  </linearGradient>
+                  <filter id="barShadow">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" floodOpacity="0.4"/>
+                  </filter>
+                </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="rgba(255, 255, 255, 0.05)"
+                  stroke="rgba(255, 255, 255, 0.08)"
                   vertical={false}
+                  strokeOpacity={0.5}
                 />
                 <XAxis
                   dataKey="date"
                   tickFormatter={formatDate}
-                  tick={{ fill: 'rgba(248, 250, 252, 0.6)', fontSize: 11 }}
-                  axisLine={{ stroke: 'rgba(248, 250, 252, 0.1)' }}
+                  tick={{ fill: 'rgba(248, 250, 252, 0.7)', fontSize: 11, fontWeight: 500 }}
+                  axisLine={{ stroke: 'rgba(16, 185, 129, 0.2)', strokeWidth: 1.5 }}
+                  tickLine={{ stroke: 'rgba(16, 185, 129, 0.2)' }}
                 />
                 <YAxis
-                  tick={{ fill: 'rgba(248, 250, 252, 0.6)', fontSize: 11 }}
-                  axisLine={{ stroke: 'rgba(248, 250, 252, 0.1)' }}
+                  tick={{ fill: 'rgba(248, 250, 252, 0.7)', fontSize: 11, fontWeight: 500 }}
+                  axisLine={{ stroke: 'rgba(16, 185, 129, 0.2)', strokeWidth: 1.5 }}
+                  tickLine={{ stroke: 'rgba(16, 185, 129, 0.2)' }}
+                  label={{ 
+                    value: 'MB', 
+                    angle: -90, 
+                    position: 'insideLeft',
+                    style: { fill: 'rgba(248, 250, 252, 0.5)', fontSize: 10 }
+                  }}
                 />
                 <Tooltip
                   content={<BytesTooltip />}
-                  cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+                  cursor={{ fill: 'rgba(255, 255, 255, 0.08)', radius: 8 }}
                 />
                 <Bar
                   dataKey="ipv4MB"
-                  fill={COLORS.ipv4}
-                  radius={[8, 8, 0, 0]}
+                  fill="url(#barGradientIPv4)"
+                  radius={[10, 10, 0, 0]}
                   animationDuration={1200}
                   animationBegin={400}
+                  filter="url(#barShadow)"
                 />
                 <Bar
                   dataKey="ipv6MB"
-                  fill={COLORS.ipv6}
-                  radius={[8, 8, 0, 0]}
+                  fill="url(#barGradientIPv6)"
+                  radius={[10, 10, 0, 0]}
                   animationDuration={1200}
                   animationBegin={600}
+                  filter="url(#barShadow)"
                 />
               </BarChart>
             </ResponsiveContainer>
