@@ -82,8 +82,10 @@ func InitDependencies(router *gin.Engine) {
 	trapService := services.NewTrapService(hub, unifiedDeviceService, trapPort)
 	mikrotikTrapHandler := handlers.NewMikrotikTrapHandler()
 	thinkOltTrapHandler := handlers.NewThinkOltTrapHandler()
+	tpLinkP7000TrapHandler := handlers.NewTPLinkP7000TrapHandler()
 	trapService.RegisterTrapHandler(mikrotikTrapHandler)
 	trapService.RegisterTrapHandler(thinkOltTrapHandler)
+	trapService.RegisterTrapHandler(tpLinkP7000TrapHandler)
 
 	go func() {
 		if err := trapService.Start(); err != nil {
