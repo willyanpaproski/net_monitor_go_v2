@@ -1,4 +1,4 @@
-import { Box, Paper, Typography, Grid, Stack, IconButton } from "@mui/material";
+import { Box, Paper, Typography, Stack, IconButton, Chip, Skeleton } from "@mui/material";
 import {
   Area,
   AreaChart,
@@ -21,6 +21,11 @@ import {
 } from "../../../api/IPVersionMetrics";
 import RouterIcon from "@mui/icons-material/Router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import DataUsageIcon from "@mui/icons-material/DataUsage";
+import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
+import { motion } from "framer-motion";
+import { styled } from "@mui/material/styles";
 
 const COLORS = {
   ipv4: "#00d4ff",
@@ -39,6 +44,40 @@ interface CustomTooltipProps {
   }>;
   label?: string;
 }
+
+// Styled Components for Reusable Card Variants
+const GlassCard = styled(Paper)(() => ({
+  background: 'rgba(19, 23, 34, 0.95)',
+  backdropFilter: 'blur(20px)',
+  border: '1px solid rgba(0, 212, 255, 0.2)',
+  borderRadius: '20px',
+  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 212, 255, 0.1)',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-4px)',
+    border: '1px solid rgba(0, 212, 255, 0.4)',
+    boxShadow: '0 30px 60px -12px rgba(0, 212, 255, 0.2)',
+  },
+}));
+
+const MetricCard = styled(Paper)(() => ({
+  background: 'rgba(19, 23, 34, 0.8)',
+  backdropFilter: 'blur(20px)',
+  borderRadius: '16px',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-4px)',
+    boxShadow: '0 12px 40px rgba(0, 212, 255, 0.15)',
+  },
+}));
+
+const GradientText = styled(Typography)(() => ({
+  background: 'linear-gradient(135deg, #00d4ff 0%, #0099cc 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  fontWeight: 700,
+}));
 
 export default function IPVersionDashboard() {
   const [show, setShow] = useState(false);
@@ -85,47 +124,89 @@ export default function IPVersionDashboard() {
     return (
       <Box
         sx={{
-          p: 3,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: 400,
+          p: { xs: 2, md: 3 },
+          minHeight: '100vh',
         }}
       >
-        <Box
-          sx={{
-            width: 48,
-            height: 48,
-            border: "3px solid rgba(0, 212, 255, 0.2)",
-            borderTop: "3px solid #00d4ff",
-            borderRadius: "50%",
-            animation: "spin 1s linear infinite",
-            "@keyframes spin": {
-              "0%": { transform: "rotate(0deg)" },
-              "100%": { transform: "rotate(360deg)" },
-            },
-          }}
-        />
+        <Stack spacing={3}>
+          <Skeleton
+            variant="rectangular"
+            height={120}
+            sx={{
+              borderRadius: '20px',
+              bgcolor: 'rgba(255, 255, 255, 0.05)',
+            }}
+          />
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton
+                key={i}
+                variant="rectangular"
+                height={140}
+                sx={{
+                  flex: 1,
+                  borderRadius: '16px',
+                  bgcolor: 'rgba(255, 255, 255, 0.05)',
+                }}
+              />
+            ))}
+          </Stack>
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+            <Skeleton
+              variant="rectangular"
+              height={400}
+              sx={{
+                flex: 1,
+                borderRadius: '20px',
+                bgcolor: 'rgba(255, 255, 255, 0.05)',
+              }}
+            />
+            <Skeleton
+              variant="rectangular"
+              height={400}
+              sx={{
+                flex: 2,
+                borderRadius: '20px',
+                bgcolor: 'rgba(255, 255, 255, 0.05)',
+              }}
+            />
+          </Stack>
+        </Stack>
       </Box>
     );
   }
 
   if (flowError || bytesError) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Paper
-          sx={{
-            p: 3,
-            bgcolor: "rgba(239, 68, 68, 0.1)",
-            border: "1px solid rgba(239, 68, 68, 0.3)",
-            borderRadius: "12px",
-            backdropFilter: "blur(10px)",
-          }}
+      <Box sx={{ p: { xs: 2, md: 3 } }}>
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
         >
-          <Typography color="error" sx={{ fontWeight: 500 }}>
-            Erro ao carregar métricas de IPv4/IPv6
-          </Typography>
-        </Paper>
+          <GlassCard
+            sx={{
+              p: 4,
+              bgcolor: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+            }}
+          >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <NetworkCheckIcon sx={{ color: 'error.main', fontSize: 32 }} />
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{ color: 'error.main', fontWeight: 600, mb: 0.5 }}
+              >
+                Erro ao carregar métricas
+              </Typography>
+              <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.9rem' }}>
+                Não foi possível carregar os dados de IPv4/IPv6. Tente novamente mais tarde.
+              </Typography>
+            </Box>
+          </Stack>
+          </GlassCard>
+        </Box>
       </Box>
     );
   }
@@ -183,20 +264,17 @@ export default function IPVersionDashboard() {
   }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       return (
-        <Paper
+        <GlassCard
+          elevation={0}
           sx={{
             p: 2,
-            bgcolor: "rgba(19, 23, 34, 0.95)",
-            border: "1px solid rgba(0, 212, 255, 0.3)",
-            borderRadius: "8px",
-            backdropFilter: "blur(10px)",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+            minWidth: 180,
           }}
         >
           <Typography
             sx={{
-              color: "#f8fafc",
-              fontSize: "0.875rem",
+              color: '#f8fafc',
+              fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
               fontWeight: 600,
               mb: 1,
             }}
@@ -206,9 +284,9 @@ export default function IPVersionDashboard() {
           {payload.map((entry, index) => (
             <Typography
               key={index}
-              sx={{ 
-                color: entry.color, 
-                fontSize: "0.8rem",
+              sx={{
+                color: entry.color,
+                fontSize: 'clamp(0.7rem, 1.8vw, 0.8rem)',
                 fontWeight: 500,
               }}
             >
@@ -219,8 +297,8 @@ export default function IPVersionDashboard() {
           {payload[0]?.payload?.totalFlows && (
             <Typography
               sx={{
-                color: "rgba(248, 250, 252, 0.6)",
-                fontSize: "0.75rem",
+                color: 'rgba(248, 250, 252, 0.6)',
+                fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)',
                 mt: 1,
                 fontWeight: 500,
               }}
@@ -228,7 +306,7 @@ export default function IPVersionDashboard() {
               Total de Flows: {payload[0].payload.totalFlows.toLocaleString()}
             </Typography>
           )}
-        </Paper>
+        </GlassCard>
       );
     }
     return null;
@@ -237,20 +315,17 @@ export default function IPVersionDashboard() {
   const BytesTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       return (
-        <Paper
+        <GlassCard
+          elevation={0}
           sx={{
             p: 2,
-            bgcolor: "rgba(19, 23, 34, 0.95)",
-            border: "1px solid rgba(0, 212, 255, 0.3)",
-            borderRadius: "8px",
-            backdropFilter: "blur(10px)",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+            minWidth: 180,
           }}
         >
           <Typography
             sx={{
-              color: "#f8fafc",
-              fontSize: "0.875rem",
+              color: '#f8fafc',
+              fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
               fontWeight: 600,
               mb: 1,
             }}
@@ -260,9 +335,9 @@ export default function IPVersionDashboard() {
           {payload.map((entry, index) => (
             <Typography
               key={index}
-              sx={{ 
-                color: entry.color, 
-                fontSize: "0.8rem",
+              sx={{
+                color: entry.color,
+                fontSize: 'clamp(0.7rem, 1.8vw, 0.8rem)',
                 fontWeight: 500,
               }}
             >
@@ -273,8 +348,8 @@ export default function IPVersionDashboard() {
           {payload[0]?.payload?.totalMB && (
             <Typography
               sx={{
-                color: "rgba(248, 250, 252, 0.6)",
-                fontSize: "0.75rem",
+                color: 'rgba(248, 250, 252, 0.6)',
+                fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)',
                 mt: 1,
                 fontWeight: 500,
               }}
@@ -282,7 +357,7 @@ export default function IPVersionDashboard() {
               Volume Total: {formatBytes(payload[0].payload.totalMB)}
             </Typography>
           )}
-        </Paper>
+        </GlassCard>
       );
     }
     return null;
@@ -294,44 +369,63 @@ export default function IPVersionDashboard() {
 
   return (
     <Box
+      component={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: show ? 1 : 0 }}
+      transition={{ duration: 0.5 }}
       sx={{
-        p: { xs: 2, md: 3 },
-        opacity: show ? 1 : 0,
-        transition: "opacity 0.5s ease-in-out",
+        p: { xs: 2, sm: 3, md: 4 },
+        minHeight: '100vh',
       }}
     >
       {/* Header Section */}
-      <Box sx={{ mb: 4 }}>
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1.5 }}>
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <GlassCard
+          elevation={0}
+          sx={{
+            p: { xs: 3, sm: 4 },
+            mb: { xs: 3, md: 4 },
+          }}
+        >
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          spacing={2}
+        >
           <Box
             sx={{
-              p: 1.5,
-              backgroundColor: "rgba(0, 212, 255, 0.1)",
-              borderRadius: "12px",
-              border: "1px solid rgba(0, 212, 255, 0.2)",
+              p: { xs: 1.5, sm: 2 },
+              backgroundColor: 'rgba(0, 212, 255, 0.1)',
+              borderRadius: '16px',
+              border: '1px solid rgba(0, 212, 255, 0.2)',
             }}
           >
-            <RouterIcon sx={{ color: "#00d4ff", fontSize: 28 }} />
+            <RouterIcon
+              sx={{
+                color: theme => theme.palette.primary.main,
+                fontSize: { xs: 28, sm: 32, md: 36 },
+              }}
+            />
           </Box>
-          <Box>
-            <Typography
+          <Box sx={{ flex: 1 }}>
+            <GradientText
               variant="h4"
               sx={{
-                color: "#f8fafc",
-                fontWeight: 700,
-                fontSize: { xs: "1.5rem", md: "2rem" },
-                background: "linear-gradient(135deg, #00d4ff 0%, #0099cc 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
+                fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+                mb: { xs: 0.5, sm: 1 },
               }}
             >
               Análise IPv4 vs IPv6
-            </Typography>
+            </GradientText>
             <Typography
-              sx={{ 
-                color: "rgba(248, 250, 252, 0.7)", 
-                fontSize: "0.9rem",
+              sx={{
+                color: 'rgba(248, 250, 252, 0.7)',
+                fontSize: 'clamp(0.8rem, 2vw, 1rem)',
                 fontWeight: 500,
               }}
             >
@@ -340,45 +434,70 @@ export default function IPVersionDashboard() {
                 : "Monitoramento de tráfego em tempo real"}
             </Typography>
           </Box>
+          {selectedDate && (
+            <IconButton
+              component={motion.button}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleBackToDaily}
+              sx={{
+                color: theme => theme.palette.primary.main,
+                backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                border: '1px solid rgba(0, 212, 255, 0.2)',
+                borderRadius: '12px',
+                p: { xs: 1, sm: 1.5 },
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 212, 255, 0.2)',
+                },
+              }}
+            >
+              <ArrowBackIcon fontSize="small" />
+            </IconButton>
+          )}
         </Stack>
+        </GlassCard>
       </Box>
 
       {/* Metrics Grid */}
-      <Grid container spacing={2} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Paper
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={{ xs: 2, md: 3 }}
+        sx={{ mb: { xs: 3, md: 4 } }}
+        flexWrap="wrap"
+      >
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 } as any}
+          sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}
+        >
+          <MetricCard
             elevation={0}
             sx={{
-              p: 3,
-              bgcolor: "rgba(19, 23, 34, 0.8)",
-              border: "1px solid rgba(0, 212, 255, 0.2)",
-              borderRadius: "16px",
-              backdropFilter: "blur(20px)",
-              backgroundImage: "linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, transparent 100%)",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-4px)",
-                border: "1px solid rgba(0, 212, 255, 0.4)",
-                boxShadow: "0 12px 40px rgba(0, 212, 255, 0.15)",
-              },
+              p: { xs: 2.5, sm: 3 },
+              border: '1px solid rgba(0, 212, 255, 0.2)',
+              backgroundImage: 'linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, transparent 100%)',
             }}
           >
+            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+              <DataUsageIcon sx={{ color: COLORS.ipv4, fontSize: 24 }} />
+              <Typography
+                sx={{
+                  color: 'rgba(248, 250, 252, 0.7)',
+                  fontSize: 'clamp(0.7rem, 1.8vw, 0.8rem)',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                Média IPv4
+              </Typography>
+            </Stack>
             <Typography
               sx={{
-                color: "rgba(248, 250, 252, 0.7)",
-                fontSize: "0.8rem",
-                mb: 1,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-              }}
-            >
-              Média IPv4
-            </Typography>
-            <Typography
-              sx={{
-                color: "#00d4ff",
-                fontSize: "2.25rem",
+                color: COLORS.ipv4,
+                fontSize: 'clamp(1.75rem, 5vw, 2.25rem)',
                 fontWeight: 800,
                 mb: 1,
                 lineHeight: 1,
@@ -386,52 +505,53 @@ export default function IPVersionDashboard() {
             >
               {avgIPv4Percentage.toFixed(1)}%
             </Typography>
-            <Typography
-              sx={{ 
-                color: "rgba(248, 250, 252, 0.6)", 
-                fontSize: "0.75rem",
+            <Chip
+              label={formatBytes(totalIPv4MB)}
+              size="small"
+              sx={{
+                bgcolor: 'rgba(0, 212, 255, 0.1)',
+                color: 'rgba(248, 250, 252, 0.8)',
+                fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)',
                 fontWeight: 500,
+                border: '1px solid rgba(0, 212, 255, 0.2)',
               }}
-            >
-              {formatBytes(totalIPv4MB)}
-            </Typography>
-          </Paper>
-        </Grid>
+            />
+          </MetricCard>
+        </Box>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Paper
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 } as any}
+          sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}
+        >
+          <MetricCard
             elevation={0}
             sx={{
-              p: 3,
-              bgcolor: "rgba(19, 23, 34, 0.8)",
-              border: "1px solid rgba(16, 185, 129, 0.2)",
-              borderRadius: "16px",
-              backdropFilter: "blur(20px)",
-              backgroundImage: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%)",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-4px)",
-                border: "1px solid rgba(16, 185, 129, 0.4)",
-                boxShadow: "0 12px 40px rgba(16, 185, 129, 0.15)",
-              },
+              p: { xs: 2.5, sm: 3 },
+              border: '1px solid rgba(16, 185, 129, 0.2)',
+              backgroundImage: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%)',
             }}
           >
+            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+              <DataUsageIcon sx={{ color: COLORS.ipv6, fontSize: 24 }} />
+              <Typography
+                sx={{
+                  color: 'rgba(248, 250, 252, 0.7)',
+                  fontSize: 'clamp(0.7rem, 1.8vw, 0.8rem)',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                Média IPv6
+              </Typography>
+            </Stack>
             <Typography
               sx={{
-                color: "rgba(248, 250, 252, 0.7)",
-                fontSize: "0.8rem",
-                mb: 1,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-              }}
-            >
-              Média IPv6
-            </Typography>
-            <Typography
-              sx={{
-                color: "#10b981",
-                fontSize: "2.25rem",
+                color: COLORS.ipv6,
+                fontSize: 'clamp(1.75rem, 5vw, 2.25rem)',
                 fontWeight: 800,
                 mb: 1,
                 lineHeight: 1,
@@ -439,52 +559,53 @@ export default function IPVersionDashboard() {
             >
               {avgIPv6Percentage.toFixed(1)}%
             </Typography>
-            <Typography
-              sx={{ 
-                color: "rgba(248, 250, 252, 0.6)", 
-                fontSize: "0.75rem",
+            <Chip
+              label={formatBytes(totalIPv6MB)}
+              size="small"
+              sx={{
+                bgcolor: 'rgba(16, 185, 129, 0.1)',
+                color: 'rgba(248, 250, 252, 0.8)',
+                fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)',
                 fontWeight: 500,
+                border: '1px solid rgba(16, 185, 129, 0.2)',
               }}
-            >
-              {formatBytes(totalIPv6MB)}
-            </Typography>
-          </Paper>
-        </Grid>
+            />
+          </MetricCard>
+        </Box>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Paper
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 } as any}
+          sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}
+        >
+          <MetricCard
             elevation={0}
             sx={{
-              p: 3,
-              bgcolor: "rgba(19, 23, 34, 0.8)",
-              border: "1px solid rgba(168, 85, 247, 0.2)",
-              borderRadius: "16px",
-              backdropFilter: "blur(20px)",
-              backgroundImage: "linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, transparent 100%)",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-4px)",
-                border: "1px solid rgba(168, 85, 247, 0.4)",
-                boxShadow: "0 12px 40px rgba(168, 85, 247, 0.15)",
-              },
+              p: { xs: 2.5, sm: 3 },
+              border: '1px solid rgba(168, 85, 247, 0.2)',
+              backgroundImage: 'linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, transparent 100%)',
             }}
           >
+            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+              <NetworkCheckIcon sx={{ color: COLORS.accent, fontSize: 24 }} />
+              <Typography
+                sx={{
+                  color: 'rgba(248, 250, 252, 0.7)',
+                  fontSize: 'clamp(0.7rem, 1.8vw, 0.8rem)',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                Total de Flows
+              </Typography>
+            </Stack>
             <Typography
               sx={{
-                color: "rgba(248, 250, 252, 0.7)",
-                fontSize: "0.8rem",
-                mb: 1,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-              }}
-            >
-              Total de Flows
-            </Typography>
-            <Typography
-              sx={{
-                color: "#a855f7",
-                fontSize: "2.25rem",
+                color: COLORS.accent,
+                fontSize: 'clamp(1.75rem, 5vw, 2.25rem)',
                 fontWeight: 800,
                 mb: 1,
                 lineHeight: 1,
@@ -494,52 +615,53 @@ export default function IPVersionDashboard() {
                 ? `${(totalFlows / 1000).toFixed(1)}K`
                 : totalFlows.toLocaleString()}
             </Typography>
-            <Typography
-              sx={{ 
-                color: "rgba(248, 250, 252, 0.6)", 
-                fontSize: "0.75rem",
+            <Chip
+              label={`${totalFlows.toLocaleString()} conexões`}
+              size="small"
+              sx={{
+                bgcolor: 'rgba(168, 85, 247, 0.1)',
+                color: 'rgba(248, 250, 252, 0.8)',
+                fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)',
                 fontWeight: 500,
+                border: '1px solid rgba(168, 85, 247, 0.2)',
               }}
-            >
-              {totalFlows.toLocaleString()} conexões
-            </Typography>
-          </Paper>
-        </Grid>
+            />
+          </MetricCard>
+        </Box>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Paper
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 } as any}
+          sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}
+        >
+          <MetricCard
             elevation={0}
             sx={{
-              p: 3,
-              bgcolor: "rgba(19, 23, 34, 0.8)",
-              border: "1px solid rgba(249, 115, 22, 0.2)",
-              borderRadius: "16px",
-              backdropFilter: "blur(20px)",
-              backgroundImage: "linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, transparent 100%)",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-4px)",
-                border: "1px solid rgba(249, 115, 22, 0.4)",
-                boxShadow: "0 12px 40px rgba(249, 115, 22, 0.15)",
-              },
+              p: { xs: 2.5, sm: 3 },
+              border: '1px solid rgba(249, 115, 22, 0.2)',
+              backgroundImage: 'linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, transparent 100%)',
             }}
           >
+            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+              <TrendingUpIcon sx={{ color: COLORS.warning, fontSize: 24 }} />
+              <Typography
+                sx={{
+                  color: 'rgba(248, 250, 252, 0.7)',
+                  fontSize: 'clamp(0.7rem, 1.8vw, 0.8rem)',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                Volume Total
+              </Typography>
+            </Stack>
             <Typography
               sx={{
-                color: "rgba(248, 250, 252, 0.7)",
-                fontSize: "0.8rem",
-                mb: 1,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-              }}
-            >
-              Volume Total
-            </Typography>
-            <Typography
-              sx={{
-                color: "#f97316",
-                fontSize: "1.75rem",
+                color: COLORS.warning,
+                fontSize: 'clamp(1.5rem, 4.5vw, 1.75rem)',
                 fontWeight: 800,
                 mb: 1,
                 lineHeight: 1.2,
@@ -547,57 +669,65 @@ export default function IPVersionDashboard() {
             >
               {formatBytes(totalMB)}
             </Typography>
-            <Typography
-              sx={{ 
-                color: "rgba(248, 250, 252, 0.6)", 
-                fontSize: "0.75rem",
+            <Chip
+              label="Tráfego acumulado"
+              size="small"
+              sx={{
+                bgcolor: 'rgba(249, 115, 22, 0.1)',
+                color: 'rgba(248, 250, 252, 0.8)',
+                fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)',
                 fontWeight: 500,
+                border: '1px solid rgba(249, 115, 22, 0.2)',
               }}
-            >
-              Tráfego acumulado
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
+            />
+          </MetricCard>
+        </Box>
+      </Stack>
 
       {/* Charts Grid */}
-      <Grid container spacing={3}>
+      <Stack
+        direction={{ xs: 'column', lg: 'row' }}
+        spacing={{ xs: 3, md: 4 }}
+        sx={{ mb: { xs: 3, md: 4 } }}
+      >
         {/* Pie Chart */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 } as any}
+          sx={{ flex: { xs: '1 1 100%', lg: '1 1 35%' } }}
+        >
+          <GlassCard
             elevation={0}
             sx={{
-              p: 3,
-              bgcolor: "rgba(19, 23, 34, 0.8)",
-              border: "1px solid rgba(0, 212, 255, 0.2)",
-              borderRadius: "16px",
-              backdropFilter: "blur(20px)",
-              height: 400,
-              display: "flex",
-              flexDirection: "column",
+              p: { xs: 3, sm: 4 },
+              height: { xs: 380, sm: 420, md: 450 },
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             <Typography
               variant="h6"
-              sx={{ 
-                mb: 3, 
-                fontWeight: 700, 
-                color: "#f8fafc",
-                fontSize: "1.1rem",
+              sx={{
+                mb: 3,
+                fontWeight: 700,
+                color: '#f8fafc',
+                fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
               }}
             >
               Distribuição de Tráfego
             </Typography>
-            <Box sx={{ flex: 1, position: "relative" }}>
+            <Box sx={{ flex: 1, position: 'relative' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={70}
-                    outerRadius={100}
-                    paddingAngle={2}
+                    innerRadius="60%"
+                    outerRadius="85%"
+                    paddingAngle={3}
                     dataKey="value"
                     startAngle={90}
                     endAngle={-270}
@@ -613,44 +743,39 @@ export default function IPVersionDashboard() {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <Paper
-                            sx={{
-                              p: 2,
-                              bgcolor: "rgba(19, 23, 34, 0.95)",
-                              border: "1px solid rgba(0, 212, 255, 0.3)",
-                              borderRadius: "8px",
-                              backdropFilter: "blur(10px)",
-                            }}
+                          <GlassCard
+                            elevation={0}
+                            sx={{ p: 2, minWidth: 160 }}
                           >
                             <Typography
                               sx={{
-                                color: "#f8fafc",
-                                fontSize: "0.8rem",
+                                color: '#f8fafc',
+                                fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
                                 fontWeight: 600,
                                 mb: 1,
                               }}
                             >
-                              Protocolo: {data.name}
+                              {data.name}
                             </Typography>
                             <Typography
                               sx={{
                                 color: data.name === "IPv4" ? COLORS.ipv4 : COLORS.ipv6,
-                                fontSize: "0.75rem",
+                                fontSize: 'clamp(0.7rem, 1.8vw, 0.8rem)',
                                 fontWeight: 600,
                               }}
                             >
-                              Percentual: {data.value.toFixed(1)}%
+                              {data.value.toFixed(1)}%
                             </Typography>
                             <Typography
                               sx={{
-                                color: "rgba(248, 250, 252, 0.6)",
-                                fontSize: "0.7rem",
+                                color: 'rgba(248, 250, 252, 0.6)',
+                                fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)',
                                 fontWeight: 500,
                               }}
                             >
-                              Volume: {formatBytes(data.mb)}
+                              {formatBytes(data.mb)}
                             </Typography>
-                          </Paper>
+                          </GlassCard>
                         );
                       }
                       return null;
@@ -659,22 +784,24 @@ export default function IPVersionDashboard() {
                 </PieChart>
               </ResponsiveContainer>
             </Box>
-          </Paper>
-        </Grid>
+          </GlassCard>
+        </Box>
 
         {/* Area Chart */}
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Paper
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.6 } as any}
+          sx={{ flex: { xs: '1 1 100%', lg: '1 1 65%' } }}
+        >
+          <GlassCard
             elevation={0}
             sx={{
-              p: 3,
-              bgcolor: "rgba(19, 23, 34, 0.8)",
-              border: "1px solid rgba(0, 212, 255, 0.2)",
-              borderRadius: "16px",
-              backdropFilter: "blur(20px)",
-              height: 400,
-              display: "flex",
-              flexDirection: "column",
+              p: { xs: 3, sm: 4 },
+              height: { xs: 380, sm: 420, md: 450 },
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             <Stack
@@ -685,56 +812,38 @@ export default function IPVersionDashboard() {
             >
               <Typography
                 variant="h6"
-                sx={{ 
-                  fontWeight: 700, 
-                  color: "#f8fafc",
-                  fontSize: "1.1rem",
+                sx={{
+                  fontWeight: 700,
+                  color: '#f8fafc',
+                  fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
                 }}
               >
                 {selectedDate
                   ? "Percentual de Flows por Hora"
                   : "Evolução Percentual por Versão IP"}
               </Typography>
-              {selectedDate && (
-                <IconButton
-                  onClick={handleBackToDaily}
-                  sx={{ 
-                    color: "#00d4ff",
-                    backgroundColor: "rgba(0, 212, 255, 0.1)",
-                    border: "1px solid rgba(0, 212, 255, 0.2)",
-                    borderRadius: "10px",
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 212, 255, 0.2)",
-                      transform: "translateY(-1px)",
-                    },
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  <ArrowBackIcon fontSize="small" />
-                </IconButton>
-              )}
             </Stack>
 
             {isLoadingHourly && selectedDate ? (
               <Box
                 sx={{
                   flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 <Box
                   sx={{
                     width: 48,
                     height: 48,
-                    border: "3px solid rgba(0, 212, 255, 0.2)",
-                    borderTop: "3px solid #00d4ff",
-                    borderRadius: "50%",
-                    animation: "spin 1s linear infinite",
-                    "@keyframes spin": {
-                      "0%": { transform: "rotate(0deg)" },
-                      "100%": { transform: "rotate(360deg)" },
+                    border: '3px solid rgba(0, 212, 255, 0.2)',
+                    borderTop: '3px solid #00d4ff',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    '@keyframes spin': {
+                      '0%': { transform: 'rotate(0deg)' },
+                      '100%': { transform: 'rotate(360deg)' },
                     },
                   }}
                 />
@@ -765,13 +874,13 @@ export default function IPVersionDashboard() {
                     <XAxis
                       dataKey={dataKey}
                       tickFormatter={tickFormatter}
-                      tick={{ fill: "rgba(248, 250, 252, 0.6)", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(248, 250, 252, 0.1)" }}
+                      tick={{ fill: 'rgba(248, 250, 252, 0.6)', fontSize: 11 }}
+                      axisLine={{ stroke: 'rgba(248, 250, 252, 0.1)' }}
                     />
                     <YAxis
                       domain={[0, 100]}
-                      tick={{ fill: "rgba(248, 250, 252, 0.6)", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(248, 250, 252, 0.1)" }}
+                      tick={{ fill: 'rgba(248, 250, 252, 0.6)', fontSize: 11 }}
+                      axisLine={{ stroke: 'rgba(248, 250, 252, 0.1)' }}
                     />
                     <Tooltip content={<FlowPercentTooltip />} />
                     <Area
@@ -782,7 +891,7 @@ export default function IPVersionDashboard() {
                       fill="url(#colorIPv4)"
                       animationDuration={1200}
                       animationBegin={400}
-                      cursor={!selectedDate ? "pointer" : "default"}
+                      cursor={!selectedDate ? 'pointer' : 'default'}
                     />
                     <Area
                       type="monotone"
@@ -792,16 +901,16 @@ export default function IPVersionDashboard() {
                       fill="url(#colorIPv6)"
                       animationDuration={1200}
                       animationBegin={600}
-                      cursor={!selectedDate ? "pointer" : "default"}
+                      cursor={!selectedDate ? 'pointer' : 'default'}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
                 {!selectedDate && hasMultipleDataPoints && (
                   <Typography
                     sx={{
-                      color: "rgba(248, 250, 252, 0.5)",
-                      fontSize: "0.75rem",
-                      textAlign: "center",
+                      color: 'rgba(248, 250, 252, 0.5)',
+                      fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)',
+                      textAlign: 'center',
                       mt: 1,
                       fontWeight: 500,
                     }}
@@ -814,90 +923,97 @@ export default function IPVersionDashboard() {
               <Box
                 sx={{
                   flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <Typography sx={{ color: "rgba(248, 250, 252, 0.5)", fontWeight: 500 }}>
+                <Typography
+                  sx={{
+                    color: 'rgba(248, 250, 252, 0.5)',
+                    fontWeight: 500,
+                    fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                  }}
+                >
                   Sem dados disponíveis para o período selecionado
                 </Typography>
               </Box>
             )}
-          </Paper>
-        </Grid>
+          </GlassCard>
+        </Box>
+      </Stack>
 
-        {/* Bar Chart */}
-        <Grid size={{ xs: 12 }}>
-          <Paper
-            elevation={0}
+      {/* Bar Chart */}
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 } as any}
+      >
+        <GlassCard
+          elevation={0}
+          sx={{
+            p: { xs: 3, sm: 4 },
+            height: { xs: 380, sm: 420, md: 450 },
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <Typography
+            variant="h6"
             sx={{
-              p: 3,
-              bgcolor: "rgba(19, 23, 34, 0.8)",
-              border: "1px solid rgba(16, 185, 129, 0.2)",
-              borderRadius: "16px",
-              backdropFilter: "blur(20px)",
-              height: 400,
-              display: "flex",
-              flexDirection: "column",
+              mb: 3,
+              fontWeight: 700,
+              color: '#f8fafc',
+              fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{ 
-                mb: 3, 
-                fontWeight: 700, 
-                color: "#f8fafc",
-                fontSize: "1.1rem",
-              }}
-            >
-              Volume de Dados por Versão IP
-            </Typography>
-            <Box sx={{ flex: 1 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={bytesData}
-                  margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="rgba(255, 255, 255, 0.05)"
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={formatDate}
-                    tick={{ fill: "rgba(248, 250, 252, 0.6)", fontSize: 11 }}
-                    axisLine={{ stroke: "rgba(248, 250, 252, 0.1)" }}
-                  />
-                  <YAxis
-                    tick={{ fill: "rgba(248, 250, 252, 0.6)", fontSize: 11 }}
-                    axisLine={{ stroke: "rgba(248, 250, 252, 0.1)" }}
-                  />
-                  <Tooltip
-                    content={<BytesTooltip />}
-                    cursor={{ fill: "rgba(255, 255, 255, 0.05)" }}
-                  />
-                  <Bar
-                    dataKey="ipv4MB"
-                    fill={COLORS.ipv4}
-                    radius={[4, 4, 0, 0]}
-                    animationDuration={1200}
-                    animationBegin={400}
-                  />
-                  <Bar
-                    dataKey="ipv6MB"
-                    fill={COLORS.ipv6}
-                    radius={[4, 4, 0, 0]}
-                    animationDuration={1200}
-                    animationBegin={600}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
+            Volume de Dados por Versão IP
+          </Typography>
+          <Box sx={{ flex: 1 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={bytesData}
+                margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="rgba(255, 255, 255, 0.05)"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={formatDate}
+                  tick={{ fill: 'rgba(248, 250, 252, 0.6)', fontSize: 11 }}
+                  axisLine={{ stroke: 'rgba(248, 250, 252, 0.1)' }}
+                />
+                <YAxis
+                  tick={{ fill: 'rgba(248, 250, 252, 0.6)', fontSize: 11 }}
+                  axisLine={{ stroke: 'rgba(248, 250, 252, 0.1)' }}
+                />
+                <Tooltip
+                  content={<BytesTooltip />}
+                  cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+                />
+                <Bar
+                  dataKey="ipv4MB"
+                  fill={COLORS.ipv4}
+                  radius={[8, 8, 0, 0]}
+                  animationDuration={1200}
+                  animationBegin={400}
+                />
+                <Bar
+                  dataKey="ipv6MB"
+                  fill={COLORS.ipv6}
+                  radius={[8, 8, 0, 0]}
+                  animationDuration={1200}
+                  animationBegin={600}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </Box>
+        </GlassCard>
+      </Box>
     </Box>
   );
 }
