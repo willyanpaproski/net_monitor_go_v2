@@ -78,10 +78,6 @@ func (p *IPVersionMetricProcessor) Process(router *models.Roteador, decoded *net
 		return nil
 	}
 
-	if p.collection == nil {
-		return p.logIPVersionStats(router, decoded.SrcIP, ipv4Count, ipv6Count, ipv4Bytes, ipv6Bytes)
-	}
-
 	now := time.Now()
 	timestampMinute := now.Truncate(5 * time.Minute)
 	nowDateTime := primitive.NewDateTimeFromTime(now)
@@ -155,32 +151,4 @@ func (p *IPVersionMetricProcessor) updatePercentages(ctx context.Context, filter
 	}
 
 	p.collection.UpdateOne(ctx, filter, update)
-}
-
-func (p *IPVersionMetricProcessor) logIPVersionStats(router *models.Roteador, srcIP string, ipv4Count, ipv6Count, ipv4Bytes, ipv6Bytes uint64) error {
-	routerName := "Desconhecido"
-	if router != nil {
-		routerName = router.Name
-	}
-
-	totalFlows := ipv4Count + ipv6Count
-	if totalFlows == 0 {
-		return nil
-	}
-
-	ipv4Pct := float64(ipv4Count) / float64(totalFlows) * 100
-	ipv6Pct := float64(ipv6Count) / float64(totalFlows) * 100
-
-	log.Printf("════════════════════════════════════════════════════════════")
-	log.Printf("[IPVersionMetric] Uso de IPv4 vs IPv6 - Router: %s (%s)", routerName, srcIP)
-	log.Printf("────────────────────────────────────────────────────────────")
-	log.Printf("  IPv4:")
-	log.Printf("    Flows:      %d (%.2f%%)", ipv4Count, ipv4Pct)
-	log.Printf("    Bytes:      %d (%.2f MB)", ipv4Bytes, float64(ipv4Bytes)/(1024*1024))
-	log.Printf("  IPv6:")
-	log.Printf("    Flows:      %d (%.2f%%)", ipv6Count, ipv6Pct)
-	log.Printf("    Bytes:      %d (%.2f MB)", ipv6Bytes, float64(ipv6Bytes)/(1024*1024))
-	log.Printf("════════════════════════════════════════════════════════════\n")
-
-	return nil
 }
